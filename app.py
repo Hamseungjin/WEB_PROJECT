@@ -110,10 +110,15 @@ def get_playlists():
 
     response = get("https://api.spotify.com/v1/me/playlists", headers=headers)
     playlists = response.json()
+    print(playlists)
     p=[]
     for playlist in playlists['items']:
         name = playlist['name']
-        images = [image['url'] for image in playlist['images'] if 'url' in image]
+        images = []
+
+        # Check if images exist and are iterable
+        if 'images' in playlist and playlist['images']:
+            images = [image['url'] for image in playlist['images'] if 'url' in image]
 
         # Check if playlist already exists in MongoDB
         existing_playlist = playlists_collection.find_one({'name': name, 'images': images})
@@ -123,6 +128,7 @@ def get_playlists():
             'name': name,
             'images': images
         })
+
         if existing_playlist:
             # Playlist already exists, skip insertion
             continue
@@ -133,8 +139,7 @@ def get_playlists():
                 'images': images
             })
     # Retrieve all playlists from MongoDB for rendering
-    context = {"playlists": p}
-    return render_template("playlists.html", **context)
+    return render_template("playlists.html", playlists=p)
 
 @app.route('/songs')
 def get_songs():
