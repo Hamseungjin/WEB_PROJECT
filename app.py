@@ -1,4 +1,6 @@
 import os
+
+import requests
 from requests import post, get
 import json
 import urllib.parse
@@ -16,6 +18,7 @@ app.secret_key = 'hsjking0403@naver.com'
 # MongoDB connection setup
 client = MongoClient('mongodb://localhost:27017/')  # Assuming MongoDB is running locally
 db = client['spotify_playlists']
+
 playlists_collection = db['playlists']
 user_most_listened_to_songs_collection = db['most_listened_songs']
 user_top_artists_collection = db['top_artists']
@@ -79,6 +82,7 @@ def callback():
 
 @app.route('/home')
 def home_page():
+
     """Landing page"""
     # 사용자의 액세스 토큰이 있는지 확인하고 만료되지 않았는지 확인한 후, 메인 페이지를 렌더링
     # error checking
@@ -110,7 +114,6 @@ def get_playlists():
 
     response = get("https://api.spotify.com/v1/me/playlists", headers=headers)
     playlists = response.json()
-    print(playlists)
     p=[]
     for playlist in playlists['items']:
         name = playlist['name']
@@ -138,6 +141,7 @@ def get_playlists():
                 'name': name,
                 'images': images
             })
+    print(p)
     # Retrieve all playlists from MongoDB for rendering
     return render_template("playlists.html", playlists=p)
 
@@ -202,6 +206,7 @@ def get_songs():
 
 @app.route('/artists')
 def get_artists():
+
     """Get top artists"""
     # 사용자의 인기 아티스트를 가져와 템플릿에 표시
 
@@ -219,6 +224,7 @@ def get_artists():
     response = get("https://api.spotify.com/v1/me/top/artists", headers=headers, timeout=10)
     data = response.json()
     artists_info = []
+
     for item in data.get("items", []):
         name = item.get("name", "")
         genres = item.get("genres", [])
@@ -243,6 +249,7 @@ def get_artists():
 
 @app.route('/recommendations')
 def get_recommendations():
+
     """Get recommended songs"""
      # 사용자의 인기 아티스트를 기반으로 추천 음악을 가져와 템플릿에 표시
 
@@ -260,6 +267,36 @@ def get_recommendations():
     # get seed artist ids
     response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
     data = response.json()
+
+    if data['total'] == 0: # Check if no artists were found
+
+        # Send the HTTP GET request to the Spotify API for the top tracks
+        response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10', headers=headers)
+        top_tracks = response.json()['items']
+        recommend_info = []
+
+        for track in top_tracks:
+            # Extract track details
+            track_name = track['track']['name']
+            artists = [artist['name'] for artist in track['track']['artists']]
+            album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+            preview_url = track['track']['preview_url']
+            release_date = track['track']['album']['release_date']  # Extract release date
+
+            # Prepare recommendation data to be stored
+            recommendation_data = {
+                "artist_name": artists,
+                "track_name": track_name,
+                "preview_url": preview_url,
+                "album_image_url": album_image_url,
+                "release_date":release_date
+            }
+            # Add to recommend_info list for rendering
+            recommend_info.append(recommendation_data)
+        print(recommend_info)
+        return render_template("non_artists_recommendations.html", recommend_info=recommend_info)
+
+
     ids = [item["id"] for item in data["items"]]
     artist_ids = ','.join(ids)
 
@@ -298,6 +335,7 @@ def get_recommendations():
 
 @app.route('/refresh-token')
 def refresh_token():
+
     """Refresh access token once it has expired"""
     # 토큰의 만료 기간이 지났을 때 자동으로 토큰을 갱신.
 

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Tracks</title>
+</head>
+<body>
+    <h1>Recommended Tracks</h1>
+    <ul>
+        {% for track_data in recommend_info %}
+        <li>
+            <h2>{{ track_data['track_name'] }}</h2>
+            <p>Artists: {{ track_data['artist_name'] | join(', ') }}</p>
+            {% if track_data['preview_url'] %}
+            <audio controls>
+                <source src="{{ track_data['preview_url'] }}" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+            {% else %}
+            <p>No preview available</p>
+            {% endif %}
+            {% if track_data['album_image_url'] %}
+            <img src="{{ track_data['album_image_url'][0] }}" alt="Album Image">
+            {% else %}
+            <p>No album image available</p>
+            {% endif %}
+            {% if track_data['release_date'] %}
+            <p>Release Date: {{ track_data['release_date'] }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
