@@ -1,6 +1,6 @@
 this is spotify recommender webservice
 
-○  Tech(2024/05/07)
+#  Tech(2024/05/07)
 
 1. Recommend system( Based on Multi-Armed Bandit Algorithm)
 2. Flask(Backend)
@@ -8,7 +8,7 @@ this is spotify recommender webservice
 4. HTML, CSS, JS 
 
 
-○  List of Services:
+#  List of Services:
 1. See user's playlists
 2. See user's most listened to songs
 3. See user's  most listened to artists
@@ -17,7 +17,7 @@ this is spotify recommender webservice
 6. See Weekly updated playlist of new domestic and international tracks & South Korea's most played song of the week.
 
 
-○  List of URLS:
+#  List of URLS:
 
 1. http://127.0.0.1:5000/: index
 2. https://accounts.spotify.com/ko/authorize: spotify login page
@@ -31,7 +31,7 @@ this is spotify recommender webservice
 
 
 
-○  Flow 
+#  Flow 
 
 1. http://127.0.0.1:5000/
 ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f74e97e9-0955-4f23-b2de-63a82e61efce)
@@ -53,11 +53,11 @@ this is spotify recommender webservice
 9. http://localhost:5000/global_and_kr_tendency : Recent Tracks vs. Top Tracks in Korea ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/4f04d9a8-6987-4090-92c7-3f9baa94f5fa)
 
 
-○  RESTful API
+#  RESTful API
 
 - to be continue
 
-○  Spotfity API 
+#  Spotfity API 
 
 1. **GET Spotify Token**
    - Endpoint: `https://accounts.spotify.com/api/token`
@@ -91,44 +91,44 @@ this is spotify recommender webservice
    - Endpoint: `https://api.spotify.com/v1/recommendations?seed_artists`
    - Purpose: This endpoint likely generates personalized music recommendations using a recommendation algorithm (potentially a multi-armed bandit approach) based on provided seed artists.
 
-○   Recommend system( Based on Multi-Armed Bandit Algorithm)
+#  Recommend system( Based on Multi-Armed Bandit Algorithm)
 
-[멀티 암드 밴딧.pdf](https://github.com/Hamseungjin/WEB_PROJECT/files/15261867/default.pdf)
+1. [멀티 암드 밴딧.pdf](https://github.com/Hamseungjin/WEB_PROJECT/files/15261867/default.pdf)
 
 REFERENCE, 
 1. https://dl.acm.org/doi/abs/10.1145/3240323.3240354
 2. https://brunch.co.kr/@albthere4u/244
 
-○  database, collection structure
+#  database, collection structure
 
-# database 2 (user_spotify_info, recommendation_info) + collection 7
+database 2 (user_spotify_info, recommendation_info) + collection 7
 
-1 user_spotify_info
- 1.1 playlists_collection
- 1.2 user_most_listened_to_songs_collection
- 1.3 user_top_artists_collection
+# 1. user_spotify_info
+ 1 playlists_collection
+ 2 user_most_listened_to_songs_collection
+ 3 user_top_artists_collection
 
-2. recommendation_info
- 2.1 recommendations_collection
- 2.2 top_tracks_collection
- 2.3 kr_top_collection
- 2.4 global_latest_tracks_collection
+# 2. recommendation_info
+ 1 recommendations_collection
+ 2 top_tracks_collection
+ 3 kr_top_collection
+ 4 global_latest_tracks_collection
 
-○  Data overview
+#  Data overview
 
-"https://api.spotify.com/v1/me/playlists"
+1 "https://api.spotify.com/v1/me/playlists"
 
 REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
 
-"https://api.spotify.com/v1/me/top/tracks"
+2 "https://api.spotify.com/v1/me/top/tracks"
 
 REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
 
-"https://api.spotify.com/v1/me/top/artists"
+3 "https://api.spotify.com/v1/me/top/artists"
 
 REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
 
-"https://api.spotify.com/v1/recommendations"
+4 "https://api.spotify.com/v1/recommendations"
 
 REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-recommendations
 
