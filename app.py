@@ -148,7 +148,6 @@ def get_playlists():
 
     response = get("https://api.spotify.com/v1/me/playlists", headers=headers)
     playlists = response.json()
-    print(playlists)
     p=[]
     for playlist in playlists['items']:
         name = playlist['name']
