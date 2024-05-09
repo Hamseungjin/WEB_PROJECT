@@ -14,15 +14,49 @@ app = Flask(__name__)
 client_id = '36b258fc1e66468eb7b030418e2363c0'
 client_secret = 'e1dd5b9ba7884a8ea1480c474e579200'
 app.secret_key = 'hsjking0403@naver.com'
+""" --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
 client = MongoClient('mongodb://localhost:27017/')  # Assuming MongoDB is running locally
-db = client['spotify_playlists']
 
-playlists_collection = db['playlists']
-user_most_listened_to_songs_collection = db['most_listened_songs']
-user_top_artists_collection = db['top_artists']
-recommendations_collection = db['recommendations']
+db_user = client['user_spotify_info']
+db_recommend=client['recommendation_info']
+
+# db
+playlists_collection = db_user['playlists'] # user's playlist collection
+
+user_most_listened_to_songs_collection = db_user['most_listened_songs'] # user's most listened songs collection
+
+user_top_artists_collection = db_user['top_artists'] # user's most listened to artists collection
+
+top_tracks_collection=db_recommend['top_tracks'] # global_top_tracks collection
+
+kr_top_collection=db_recommend['kr_top_tracks'] # korea_top_tracks collection
+
+global_latest_tracks_collection=db_recommend['global_latest_tracks'] # worldwide latest track collection
+
+recommendations_collection = db_recommend['recommendations'] # recommended songs collection
+
+
+""" 
+#  database 2 (user_spotify_info, recommendation_info) + collection 7
+
+# 1 user_spotify_info
+
+# 1.1 playlists_collection
+# 1.2 user_most_listened_to_songs_collection
+# 1.3 user_top_artists_collection
+
+# 2. recommendation_info
+
+# 2.1 recommendations_collection
+# 2.2 top_tracks_collection
+# 2.3 kr_top_collection
+# 2.4 global_latest_tracks_collection
+"""
+
+
+""" --------------------------------------------------------------------------------------------------------- """
 
 @app.route('/')
 def index():
@@ -114,6 +148,7 @@ def get_playlists():
 
     response = get("https://api.spotify.com/v1/me/playlists", headers=headers)
     playlists = response.json()
+    print(playlists)
     p=[]
     for playlist in playlists['items']:
         name = playlist['name']
@@ -245,8 +280,8 @@ def get_artists():
             else:
                 artists_info.append(existing_artist)
     return render_template("artists.html", artists_info=artists_info)
-@app.route('/top_tracks_recommendations')
-def top_tracks_recommendations():
+@app.route('/global_top_tracks')
+def global_top_tracks():
     # error checking
     if 'access_token' not in session:
         return redirect('/login')
@@ -277,9 +312,20 @@ def top_tracks_recommendations():
             "album_image_url": album_image_url,
             "release_date": release_date,
         }
+        # 데이터 중복 확인
+        existing_data = top_tracks_collection.find_one({
+            "artist_name": recommendation_data["artist_name"],
+            "track_name": recommendation_data["track_name"]
+            # 이 외에도 필요한 조건을 추가할 수 있습니다 (예: release_date 등)
+        })
+
+        if existing_data is None:
+            # MongoDB에 저장
+            top_tracks_collection.insert_one(recommendation_data)
         # Add to recommend_info list for rendering
         recommend_info.append(recommendation_data)
-    return render_template("top_tracks_recommendations.html", recommend_info=recommend_info)
+
+    return render_template("global_top_tracks.html", recommend_info=recommend_info)
 
 
 @app.route('/global_and_kr_tendency')
@@ -326,6 +372,9 @@ def global_and_kr_tendency():
             'preview_url': preview_url,
             'release_date': release_date
         })
+        # MongoDB에 중복 삽입 방지
+        if not kr_top_collection.find_one({'track_name': track_name, 'artists': artists}):
+            kr_top_collection.insert_one(data_kr)
         # Add to recommend_info list for rendering
         top_tracks_kr_info.append(data_kr)
 
@@ -346,6 +395,9 @@ def global_and_kr_tendency():
             'preview_url': preview_url,
             'release_date': release_date
         })
+        # MongoDB에 중복 삽입 방지
+        if not global_latest_tracks_collection.find_one({'track_name': track_name, 'artists': artists}):
+            global_latest_tracks_collection.insert_one(data_recent_tracks)
         # Add to recommend_info list for rendering
         recent_tracks_info.append(data_recent_tracks)
     return render_template("global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
@@ -393,9 +445,22 @@ def get_recommendations():
                 "album_image_url": album_image_url,
                 "release_date":release_date,
             }
+
+            # 데이터 중복 확인
+            existing_data = top_tracks_collection.find_one({
+                "artist_name": recommendation_data["artist_name"],
+                "track_name": recommendation_data["track_name"]
+                # 이 외에도 필요한 조건을 추가할 수 있습니다 (예: release_date 등)
+            })
+
+            if existing_data is None:
+                # MongoDB에 저장
+                top_tracks_collection.insert_one(recommendation_data)
+
             # Add to recommend_info list for rendering
             recommend_info.append(recommendation_data)
-        return render_template("top_tracks_recommendations.html", recommend_info=recommend_info)
+
+        return render_template("global_top_tracks.html", recommend_info=recommend_info)
 
     ids = [item["id"] for item in data["items"]]
     artist_ids = ','.join(ids)
