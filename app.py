@@ -300,12 +300,12 @@ def global_and_kr_tendency():
     }
 
     # 인기곡 -대한 민국(주간)
-    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=10', headers=headers)
+    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20', headers=headers)
     top_tracks_kr = response.json()['items']
 
 
     # 국내외 신곡들 (매주 업데이트)
-    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=10', headers=headers)
+    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=20', headers=headers)
     recent_tracks = response_2.json()['items']
 
     top_tracks_kr_info=[]
@@ -370,11 +370,10 @@ def get_recommendations():
     }
 
     # get seed artist ids
-    response = get("https://api.spotify.com/v1/me/top/artists?limit=10", headers=headers, timeout=10)
+    response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
     data = response.json()
 
     if data['total'] == 0: # Check if no artists were found
-
         # Send the HTTP GET request to the Spotify API for the top tracks
         response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10', headers=headers)
         top_tracks = response.json()['items']
@@ -402,9 +401,10 @@ def get_recommendations():
     artist_ids = ','.join(ids)
 
     # get recommendations with artist id as input
-    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=30", headers=headers, timeout=10)
+    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=100", headers=headers,timeout=10)
     recommendations = response.json()
     recommend_info = []
+
 
     # Assuming 'recommendations' is the JSON response from Spotify API
     for track in recommendations['tracks']:
@@ -430,7 +430,6 @@ def get_recommendations():
                 recommend_info.append(recommendation_data)
                 # Insert into MongoDB to avoid duplicates
                 recommendations_collection.insert_one(recommendation_data)
-
     return render_template("recommendations.html", recommend_info=recommend_info)
 
 
