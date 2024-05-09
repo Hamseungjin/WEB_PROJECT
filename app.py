@@ -141,7 +141,6 @@ def get_playlists():
                 'name': name,
                 'images': images
             })
-    print(p)
     # Retrieve all playlists from MongoDB for rendering
     return render_template("playlists.html", playlists=p)
 
@@ -246,6 +245,112 @@ def get_artists():
             else:
                 artists_info.append(existing_artist)
     return render_template("artists.html", artists_info=artists_info)
+@app.route('/top_tracks_recommendations')
+def top_tracks_recommendations():
+    # error checking
+    if 'access_token' not in session:
+        return redirect('/login')
+
+    if datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/refresh-token')
+
+    headers = {
+        'Authorization': f"Bearer {session['access_token']}"
+    }
+    # Send the HTTP GET request to the Spotify API for the top tracks
+    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10',
+                            headers=headers)
+    top_tracks = response.json()['items']
+    recommend_info = []
+
+    for track in top_tracks:
+        # Extract track details
+        track_name = track['track']['name']
+        artists = [artist['name'] for artist in track['track']['artists']]
+        album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+        release_date = track['track']['album']['release_date']  # Extract release date
+
+        # Prepare recommendation data to be stored
+        recommendation_data = {
+            "artist_name": artists,
+            "track_name": track_name,
+            "album_image_url": album_image_url,
+            "release_date": release_date,
+        }
+        # Add to recommend_info list for rendering
+        recommend_info.append(recommendation_data)
+    return render_template("top_tracks_recommendations.html", recommend_info=recommend_info)
+
+
+@app.route('/global_and_kr_tendency')
+# global_and_kr_tendcy
+def global_and_kr_tendency():
+    """Get recommended songs"""
+     # 사용자의 인기 아티스트를 기반으로 추천 음악을 가져와 템플릿에 표시
+
+    # error checking
+    if 'access_token' not in session:
+        return redirect('/login')
+
+    if datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/refresh-token')
+
+    headers = {
+        'Authorization': f"Bearer {session['access_token']}"
+    }
+
+    # 인기곡 -대한 민국(주간)
+    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=10', headers=headers)
+    top_tracks_kr = response.json()['items']
+
+
+    # 국내외 신곡들 (매주 업데이트)
+    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=10', headers=headers)
+    recent_tracks = response_2.json()['items']
+
+    top_tracks_kr_info=[]
+    recent_tracks_info=[]
+
+    for track in top_tracks_kr:
+        # Extract track details
+        track_name = track['track']['name']
+        artists = [artist['name'] for artist in track['track']['artists']]
+        album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+        preview_url = track['track']['preview_url']
+        release_date = track['track']['album']['release_date']
+
+        data_kr=({
+            'track_name': track_name,
+            'artists': artists,
+            'album_image': album_images,
+            'preview_url': preview_url,
+            'release_date': release_date
+        })
+        # Add to recommend_info list for rendering
+        top_tracks_kr_info.append(data_kr)
+
+
+
+    for track in recent_tracks:
+        # Extract track details
+        track_name = track['track']['name']
+        artists = [artist['name'] for artist in track['track']['artists']]
+        album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+        preview_url = track['track']['preview_url']
+        release_date = track['track']['album']['release_date']
+
+        data_recent_tracks=({
+            'track_name': track_name,
+            'artists': artists,
+            'album_image': album_images,
+            'preview_url': preview_url,
+            'release_date': release_date
+        })
+        # Add to recommend_info list for rendering
+        recent_tracks_info.append(data_recent_tracks)
+    return render_template("global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
+
+
 
 @app.route('/recommendations')
 def get_recommendations():
@@ -265,7 +370,7 @@ def get_recommendations():
     }
 
     # get seed artist ids
-    response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
+    response = get("https://api.spotify.com/v1/me/top/artists?limit=10", headers=headers, timeout=10)
     data = response.json()
 
     if data['total'] == 0: # Check if no artists were found
@@ -280,22 +385,18 @@ def get_recommendations():
             track_name = track['track']['name']
             artists = [artist['name'] for artist in track['track']['artists']]
             album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
-            preview_url = track['track']['preview_url']
             release_date = track['track']['album']['release_date']  # Extract release date
 
             # Prepare recommendation data to be stored
             recommendation_data = {
                 "artist_name": artists,
                 "track_name": track_name,
-                "preview_url": preview_url,
                 "album_image_url": album_image_url,
-                "release_date":release_date
+                "release_date":release_date,
             }
             # Add to recommend_info list for rendering
             recommend_info.append(recommendation_data)
-        print(recommend_info)
-        return render_template("non_artists_recommendations.html", recommend_info=recommend_info)
-
+        return render_template("top_tracks_recommendations.html", recommend_info=recommend_info)
 
     ids = [item["id"] for item in data["items"]]
     artist_ids = ','.join(ids)
