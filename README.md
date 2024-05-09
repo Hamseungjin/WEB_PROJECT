@@ -104,15 +104,15 @@ REFERENCE,
 # database 2 (user_spotify_info, recommendation_info) + collection 7
 
 1 user_spotify_info
-# 1.1 playlists_collection
-# 1.2 user_most_listened_to_songs_collection
-# 1.3 user_top_artists_collection
+ 1.1 playlists_collection
+ 1.2 user_most_listened_to_songs_collection
+ 1.3 user_top_artists_collection
 
 2. recommendation_info
-# 2.1 recommendations_collection
-# 2.2 top_tracks_collection
-# 2.3 kr_top_collection
-# 2.4 global_latest_tracks_collection
+ 2.1 recommendations_collection
+ 2.2 top_tracks_collection
+ 2.3 kr_top_collection
+ 2.4 global_latest_tracks_collection
 
 ○  Data overview
 
