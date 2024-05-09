@@ -65,20 +65,20 @@ this is spotify recommender webservice
 
 - to be continue
 
-○   기능별로 데이터베이스, collection 만들기
+○  기능별로 데이터베이스, collection 만들기
 
-1 현재 Playlist에 대한 데이터베이스, collection만 만들음.
-  
-2. 다음에 해야할 것.(이번주 안에 해결하기.)
-   
-2.1. artist에 대한 데이터베이스 ,collection 만들기
-2.2. songs에 대한 데이터베이스, collection 만들기
-2.3. recommend user songs에 대한 데이터베이스, collection 만들기
-2.4. recommend top_track에 대한 데이터베이스, collection 만들기
-2.5. 인기곡 -대한민국(주간)에 대한 데이터베이스, collection만들기
-2.6. 신곡- 국내외(매주 업데이트)에 대한 데이터베이스, collection 만들기
+ 1 현재 Playlist에 대한 데이터베이스, collection만 만듦.
+ 2. 다음에 해야할 것.(이번주 안에 해결하기.)
+   2.1. artist에 대한 데이터베이스 ,collection 만들기
+   2.2. songs에 대한 데이터베이스, collection 만들기
+   2.3. recommend user songs에 대한 데이터베이스, collection 만들기
+   2.4. recommend top_track에 대한 데이터베이스, collection 만들기
+   2.5. 인기곡 -대한민국(주간)에 대한 데이터베이스, collection만들기
+   2.6. 신곡- 국내외(매주 업데이트)에 대한 데이터베이스, collection 만들기
 
+○  데이터 정리하기
 
+- to be continue(어떠한 데이터가 있는지, Spotify API Web developer 사이트)
 
 
 
