@@ -22,7 +22,7 @@ this is spotify recommender webservice
 1. http://127.0.0.1:5000/: index
 2. https://accounts.spotify.com/ko/authorize: spotify login page
 3. http://localhost:5000/home: List of Services
-4. http://localhost:5000/playlists:user's Playlists
+4. http://localhost:5000/playlists: user's Playlists
 5. http://localhost:5000/songs: uer's Most Listened To Songs
 6. http://localhost:5000/artists: user's Most Listened To Artists
 7. http://localhost:5000/recommendations: Recommended user songs
