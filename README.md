@@ -53,6 +53,19 @@ this is spotify recommender webservice
 9. http://localhost:5000/global_and_kr_tendency : Recent Tracks vs. Top Tracks in Korea ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/4f04d9a8-6987-4090-92c7-3f9baa94f5fa)
 
 
+○  RESTful API
+
+- to be continue
+
+○  Spotfity API 
+
+- to be continue
+
+○   Recommend system( Based on Multi-Armed Bandit Algorithm)
+
+- to be continue
+
+- 
 
 
 
