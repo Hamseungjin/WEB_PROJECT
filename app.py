@@ -11,9 +11,9 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-client_id = '36b258fc1e66468eb7b030418e2363c0'
-client_secret = 'e1dd5b9ba7884a8ea1480c474e579200'
-app.secret_key = 'hsjking0403@naver.com'
+client_id = ''
+client_secret = ''
+app.secret_key = ''
 """ --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
