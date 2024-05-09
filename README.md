@@ -1,6 +1,6 @@
 this is spotify recommender webservice
 
-○  Tech(2024/05/07)
+#  Tech(2024/05/07)
 
 1. Recommend system( Based on Multi-Armed Bandit Algorithm)
 2. Flask(Backend)
@@ -8,7 +8,7 @@ this is spotify recommender webservice
 4. HTML, CSS, JS 
 
 
-○  List of Services:
+#  List of Services:
 1. See user's playlists
 2. See user's most listened to songs
 3. See user's  most listened to artists
@@ -17,7 +17,7 @@ this is spotify recommender webservice
 6. See Weekly updated playlist of new domestic and international tracks & South Korea's most played song of the week.
 
 
-○  List of URLS:
+#  List of URLS:
 
 1. http://127.0.0.1:5000/: index
 2. https://accounts.spotify.com/ko/authorize: spotify login page
@@ -31,7 +31,7 @@ this is spotify recommender webservice
 
 
 
-○  Flow 
+#  Flow 
 
 1. http://127.0.0.1:5000/
 ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f74e97e9-0955-4f23-b2de-63a82e61efce)
@@ -53,36 +53,83 @@ this is spotify recommender webservice
 9. http://localhost:5000/global_and_kr_tendency : Recent Tracks vs. Top Tracks in Korea ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/4f04d9a8-6987-4090-92c7-3f9baa94f5fa)
 
 
-○  RESTful API
+#  RESTful API
 
 - to be continue
 
-○  Spotfity API 
+#  Spotfity API 
 
-- to be continue
+1. **GET Spotify Token**
+   - Endpoint: `https://accounts.spotify.com/api/token`
+   - Purpose: This endpoint is used to authenticate and obtain an access token for making subsequent requests to the Spotify API.
 
-○   Recommend system( Based on Multi-Armed Bandit Algorithm)
+2. **GET User's Playlists**
+   - Endpoint: `https://api.spotify.com/v1/me/playlists`
+   - Purpose: Fetches a list of playlists owned or followed by the current Spotify user.
 
-- to be continue
+3. **GET User's Most Listened Songs**
+   - Endpoint: `https://api.spotify.com/v1/me/top/tracks`
+   - Purpose: Retrieves the user's most listened to tracks.
 
-○  기능별로 데이터베이스, collection 만들기
+4. **GET User's Most Listened to Artists**
+   - Endpoint: `https://api.spotify.com/v1/me/top/artists`
+   - Purpose: Retrieves the user's most listened to artists.
 
- 1 현재 Playlist에 대한 데이터베이스, collection만 만듦.
- 2. 다음에 해야할 것.(이번주 안에 해결하기.)
-   2.1. artist에 대한 데이터베이스 ,collection 만들기
-   2.2. songs에 대한 데이터베이스, collection 만들기
-   2.3. recommend user songs에 대한 데이터베이스, collection 만들기
-   2.4. recommend top_track에 대한 데이터베이스, collection 만들기
-   2.5. 인기곡 -대한민국(주간)에 대한 데이터베이스, collection만들기
-   2.6. 신곡- 국내외(매주 업데이트)에 대한 데이터베이스, collection 만들기
+5. **GET 인기곡 - 대한 민국 (주간)**
+   - Endpoint: `https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20`
+   - Purpose: Fetches tracks from the "인기곡 - 대한 민국 (주간)" playlist on Spotify, limited to 20 tracks.
 
-○  데이터 정리하기
+6. **GET 국내외 신곡들 (매주 업데이트)**
+   - Endpoint: `https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=20`
+   - Purpose: Retrieves tracks from the "국내외 신곡들 (매주 업데이트)" playlist, limited to 20 tracks.
 
-- to be continue(어떠한 데이터가 있는지, Spotify API Web developer 사이트)
+7. **GET Global Top Tracks**
+   - Endpoint: `https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10`
+   - Purpose: Retrieves tracks from the "Global top tracks" playlist, limited to 10 tracks.
 
+8. **GET Spotfit Recommend Algorithm (Multi-Arm-Bandit) API**
+   - Endpoint: `https://api.spotify.com/v1/recommendations?seed_artists`
+   - Purpose: This endpoint likely generates personalized music recommendations using a recommendation algorithm (potentially a multi-armed bandit approach) based on provided seed artists.
 
+#  Recommend system( Based on Multi-Armed Bandit Algorithm)
 
+1. [멀티 암드 밴딧.pdf](https://github.com/Hamseungjin/WEB_PROJECT/files/15261867/default.pdf)
 
+REFERENCE, 
+1. https://dl.acm.org/doi/abs/10.1145/3240323.3240354
+2. https://brunch.co.kr/@albthere4u/244
 
+#  database, collection structure
+
+database 2 (user_spotify_info, recommendation_info) + collection 7
+
+# 1. user_spotify_info
+ 1. playlists_collection
+ 2. user_most_listened_to_songs_collection
+ 3. user_top_artists_collection
+
+# 2. recommendation_info
+ 1. recommendations_collection
+ 2. top_tracks_collection
+ 3. kr_top_collection
+ 4. global_latest_tracks_collection
+
+#  Data overview
+
+1 "https://api.spotify.com/v1/me/playlists"
+
+REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-a-list-of-current-users-playlists
+
+2 "https://api.spotify.com/v1/me/top/tracks"
+
+REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
+
+3 "https://api.spotify.com/v1/me/top/artists"
+
+REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-users-top-artists-and-tracks
+
+4 "https://api.spotify.com/v1/recommendations"
+
+REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-recommendations
 
 
