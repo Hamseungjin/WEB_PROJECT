@@ -36,7 +36,8 @@ this is spotify recommender webservice
 1. http://127.0.0.1:5000/
 ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f74e97e9-0955-4f23-b2de-63a82e61efce)
 
-2. https://accounts.spotify.com/ko/authorize: spotify login page  ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/735f1794-896a-4351-8fd8-bdb9c2019274)
+2. https://accounts.spotify.com/ko/authorize: spotify login page  ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/edcc3246-a8d5-4547-901b-a5fee120f129)
+
 
 3. http://localhost:5000/home: List of Servicesc ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f5c4fb81-2772-480d-8a70-bf762e76fdd6)
 
