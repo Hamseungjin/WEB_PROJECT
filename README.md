@@ -133,4 +133,10 @@ REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-use
 
 REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-recommendations
 
+# Contributor
+
+- [Seung Jin HAM](https://github.com/Hamseungjin)
+- [Ji Won BANG](https://github.com/banxzxx)
+- [Florian](https://github.com/Florian-Fogliani)
+- [Doh yun KIM](https://github.com/neeewbieee)
 
