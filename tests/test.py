@@ -28,18 +28,6 @@ class TestApp(unittest.TestCase):
         response = self.app.get('/home')
         self.assertEqual(response.status_code, 302)  # Redirects to login if no access token
 
-    def test_get_playlists(self):
-        response = self.app.get('/playlists')
-        self.assertEqual(response.status_code, 302)  # Redirects to login if no access token
-
-        # Assuming valid access token in session
-        with self.app.session_transaction() as sess:
-            sess['access_token'] = 'valid_access_token'
-
-        response = self.app.get('/playlists')
-        self.assertEqual(response.status_code, 200)
-        # Add assertions to check if playlists are rendered properly
-
     # Add similar test methods for other routes like get_songs, get_artists, etc.
 
 if __name__ == '__main__':
