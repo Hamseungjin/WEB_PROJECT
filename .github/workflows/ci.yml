@@ -18,7 +18,6 @@ jobs:
         image: mongo:latest
         ports:
           - 27017:27017
-        options: --quiet --config /etc/mongo/mongodb.conf
 
     env:
       CLIENT_ID: ${{ secrets.CLIENT_ID }}
