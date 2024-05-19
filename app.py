@@ -11,9 +11,15 @@ from pymongo import MongoClient
 
 app = Flask(__name__)
 
-client_id = ''
-client_secret = ''
-app.secret_key = ''
+# Load secrets from environment variables
+client_id = os.getenv('CLIENT_ID')
+client_secret = os.getenv('CLIENT_SECRET')
+app.secret_key = os.getenv('APP_SECRET_KEY')
+
+# Ensure the secrets are available
+if not client_id or not client_secret or not app.secret_key:
+    raise ValueError("One or more secrets are not set in the environment variables.")
+
 """ --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
