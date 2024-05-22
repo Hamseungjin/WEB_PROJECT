@@ -523,5 +523,9 @@ def refresh_token():
         return redirect('/playlists')
 
 
+@app.route("/checkLayout")
+def checkLayout():
+    return render_template("layout.html")
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
