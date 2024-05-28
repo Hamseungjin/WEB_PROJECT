@@ -1,5 +1,4 @@
 import os
-
 import requests
 from requests import post, get
 import json
@@ -8,17 +7,28 @@ import datetime
 from flask import Flask, redirect, request, jsonify, session, render_template
 import flask
 from pymongo import MongoClient
+from pymongo.server_api import ServerApi
 
 app = Flask(__name__)
 
-client_id = ''
-client_secret = ''
-app.secret_key = ''
+MongoDB_ID = os.getenv('MongoDB_ID')
+MongoDB_secret = os.getenv('MongoDB_secret')
+
+# Format the URI string with the retrieved credentials
+# uri = f"mongodb+srv://{MongoDB_ID}:{MongoDB_secret}@cluster0.a7ow35t.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0"
+uri='mongodb://localhost:27017'
+# Load secrets from environment variables
+client_id = os.getenv('SPOTIFY_CLIENT_ID')
+client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
+app.secret_key = os.getenv('APP_SECRET_KEY')
+
+# Ensure the secrets are available
+if not client_id or not client_secret or not app.secret_key:
+    raise ValueError("One or more secrets are not set in the environment variables.")
 """ --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
-client = MongoClient('mongodb://localhost:27017/')  # Assuming MongoDB is running locally
-
+client = MongoClient(uri)  # Assuming MongoDB is running Atlas
 db_user = client['user_spotify_info']
 db_recommend=client['recommendation_info']
 
@@ -36,6 +46,7 @@ kr_top_collection=db_recommend['kr_top_tracks'] # korea_top_tracks collection
 global_latest_tracks_collection=db_recommend['global_latest_tracks'] # worldwide latest track collection
 
 recommendations_collection = db_recommend['recommendations'] # recommended songs collection
+#--------------------------------------------------------------------------------------------
 
 
 """ 
@@ -82,16 +93,15 @@ def login():
     # http://localhost:5000/callback?error=access_denied경우 index.html로 이동
     return redirect(auth_url)
 
-
 @app.route('/callback')
 def callback():
     """Handle login response"""
-    # 로그인 후 Spotify에서 전달된 인증 코드를 받아 액세스 토큰을 요청하고, 토큰을 세션에 저장
-
-    # if there is an error
+    # Check for errors in the callback
     if 'error' in request.args:
-        return flask.render_template("index.html")
+        # Handle error (e.g., user denied the authorization)
+        return flask.render_template("index.html", error="Authorization failed.")
 
+    # Handle the response after user has logged in
     if 'code' in request.args:
         body = {
             'code': request.args['code'],
@@ -100,39 +110,57 @@ def callback():
             'client_id': client_id,
             'client_secret': client_secret
         }
-
-        # get request
+        # Exchange code for an access token
         url = "https://accounts.spotify.com/api/token"
         response = post(url, data=body)
         token_info = response.json()
 
-        # store important info
+        # Store tokens and expiry in session
         session['access_token'] = token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']
         session['expires'] = datetime.datetime.now().timestamp() + token_info['expires_in']
 
-        return redirect('/home')
+        # Verify if the user is a paid subscriber
+        return verify_subscription()
 
+    return redirect('/')
+
+def verify_subscription():
+    """Verify if the logged-in user is a paid subscriber."""
+    if 'access_token' not in session or datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/login')
+
+    headers = {'Authorization': f"Bearer {session['access_token']}"}
+    response = get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
+    data = response.json()
+
+    # Check if the data includes top tracks, which indicates a paid subscription
+    if not data.get('items'):
+        # No top tracks available, user might not be a paid subscriber
+        session['is_subscriber'] = False
+    else:
+        # Data is available, user is a paid subscriber
+        session['is_subscriber'] = True
+
+    return redirect('/home')
 
 @app.route('/home')
 def home_page():
+    """Landing page that checks user subscription status."""
+    if not session.get('is_subscriber', False):
+        # If the user is not a subscriber, restrict access to certain features
+        return render_template("unauthorized.html", message="This feature is available for paid subscribers only.")
 
-    """Landing page"""
-    # 사용자의 액세스 토큰이 있는지 확인하고 만료되지 않았는지 확인한 후, 메인 페이지를 렌더링
-    # error checking
-    if 'access_token' not in session:
-        return redirect('/login')
-
-    if datetime.datetime.now().timestamp() > session['expires']:
-        return redirect('/refresh-token')
-
+    # Proceed to render the home page for subscribers
     return flask.render_template("landing.html")
-
 
 @app.route('/playlists')
 def get_playlists():
     """Get playlists"""
     #사용자의 플레이리스트를 가져와 템플릿에 표시
+
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -146,8 +174,10 @@ def get_playlists():
     }
     # url = "https://api.spotify.com/v1/me/playlists"
 
+
     response = get("https://api.spotify.com/v1/me/playlists", headers=headers)
     playlists = response.json()
+
     p=[]
     for playlist in playlists['items']:
         name = playlist['name']
@@ -182,6 +212,8 @@ def get_playlists():
 def get_songs():
     """Get top songs"""
     # 사용자의 인기 트랙을 가져와 템플릿에 표시
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -197,6 +229,9 @@ def get_songs():
 
     response = get("https://api.spotify.com/v1/me/top/tracks", headers=headers, timeout=10)
     data = response.json()
+    print(data)
+
+
     # Extract information for each track and store in MongoDB
     tracks_info = []
     for item in data['items']:  # Iterate over the 'items' key in 'data'
@@ -234,6 +269,7 @@ def get_songs():
         # Append track_info to tracks_info list
         tracks_info.append(track_info)
 
+
     return render_template("songs.html", tracks_info=tracks_info)
 
 
@@ -242,6 +278,8 @@ def get_artists():
 
     """Get top artists"""
     # 사용자의 인기 아티스트를 가져와 템플릿에 표시
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -256,6 +294,7 @@ def get_artists():
 
     response = get("https://api.spotify.com/v1/me/top/artists", headers=headers, timeout=10)
     data = response.json()
+
     artists_info = []
 
     for item in data.get("items", []):
@@ -524,4 +563,4 @@ def refresh_token():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True, port=3000)
+    app.run(host='0.0.0.0', debug=True, port=5000)
