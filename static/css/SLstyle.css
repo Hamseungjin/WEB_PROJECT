@@ -4,7 +4,8 @@ body {
   margin: 0;
   padding: 0;
   overflow: auto;
-  background: #fcb01e;
+  background: white;
+  /* #fcb01e; */
   font-family: "Major Mono Display";
   font-weight: 700;
 }
@@ -505,10 +506,10 @@ audio {
 #wrap:before, #wrap:after {
   mix-blend-mode: difference;
   pointer-events: none;
-  content: "2023 top 10";
+  content: "sots top 10";
   position: fixed;
-  text-shadow: 20vw 0 0 #232323, 40vw 0 0 #232323, 60vw 0 0 #232323, 80vw 0 0 #232323, 100vw 0 0 #232323, 120vw 0 0 #232323, 140vw 0 0 #232323;
-  color: #232323;
+  text-shadow: 20vw 0 0 #f9f9f9, 40vw 0 0 #f9f9f9, 60vw 0 0 #f9f9f9, 80vw 0 0 #f9f9f9, 100vw 0 0 #f9f9f9, 120vw 0 0 #f9f9f9, 140vw 0 0 #f9f9f9;
+  color: #f9f9f9;
   font-size: 2vw;
   bottom: 1rem;
   left: 0;
@@ -549,7 +550,7 @@ audio {
   position: absolute;
   width: 200vw;
   height: 200vh;
-  background: linear-gradient(to right, rgba(252, 176, 30, 0.75), rgba(252, 176, 30, 0.9), rgba(252, 176, 30, 0.75));
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0), rgba(255, 255, 255, 0));
   backdrop-filter: blur(8px);
   left: -50vw;
   top: -50vh;
