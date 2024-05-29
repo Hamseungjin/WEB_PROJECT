@@ -525,7 +525,11 @@ def refresh_token():
 
 @app.route("/checkLayout")
 def checkLayout():
-    return render_template("layout.html")
+    return render_template("main.html")
+
+@app.route("/songlist")
+def songlist():
+    return render_template("songlist.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=3000)
