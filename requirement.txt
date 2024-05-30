@@ -11,8 +11,8 @@ itsdangerous==2.2.0
 jinja2==3.1.4
 pip==24.0
 pymongo==4.7.2
-requests==2.31.0
-setuptools==69.5.1
+requests==2.32.3
+setuptools==70.0.0
 urllib3==2.2.1
 werkzeug==3.0.3
 wheel==0.43.0

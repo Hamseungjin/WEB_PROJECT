@@ -7,19 +7,13 @@ import datetime
 from flask import Flask, redirect, request, jsonify, session, render_template
 import flask
 from pymongo import MongoClient
-from pymongo.server_api import ServerApi
 
 app = Flask(__name__)
 
-MongoDB_ID = os.getenv('MongoDB_ID')
-MongoDB_secret = os.getenv('MongoDB_secret')
-
-# Format the URI string with the retrieved credentials
-# uri = f"mongodb+srv://{MongoDB_ID}:{MongoDB_secret}@cluster0.a7ow35t.mongodb.net/Cluster0?retryWrites=true&w=majority&appName=Cluster0"
 uri='mongodb://localhost:27017'
 # Load secrets from environment variables
-client_id = os.getenv('SPOTIFY_CLIENT_ID')
-client_secret = os.getenv('SPOTIFY_CLIENT_SECRET')
+client_id = os.getenv('client_id')
+client_secret = os.getenv('client_secret')
 app.secret_key = os.getenv('APP_SECRET_KEY')
 
 # Ensure the secrets are available
@@ -28,7 +22,8 @@ if not client_id or not client_secret or not app.secret_key:
 """ --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
-client = MongoClient(uri)  # Assuming MongoDB is running Atlas
+client = MongoClient(uri)  # Assuming MongoDB is running local
+
 db_user = client['user_spotify_info']
 db_recommend=client['recommendation_info']
 
