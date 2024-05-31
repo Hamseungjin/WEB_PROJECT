@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommended Tracks</title>
+</head>
+<body>
+    <h1>Recent Tracks vs. Top Tracks in Korea</h1>
+
+    <div style="display: flex; justify-content: space-between;">
+        <!-- Recent Tracks -->
+        <div style="width: 45%;">
+            <h2>Recent Tracks</h2>
+            <ul>
+                {% for track in recent_tracks_info %}
+                <li>
+                    <strong>{{ track.track_name }}</strong><br>
+                    Artists: {{ track.artists | join(", ") }}<br>
+                    <img src="{{ track.album_image[0] }}" alt="Album Art"><br>
+                    {% if track.preview_url %}
+                    <audio controls>
+                        <source src="{{ track.preview_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio><br>
+                    {% else %}
+                    <em>No preview available</em><br>
+                    {% endif %}
+                    Released: {{ track.release_date }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Top Tracks in Korea -->
+        <div style="width: 45%;">
+            <h2>Top Tracks in Korea</h2>
+            <ul>
+                {% for track in top_tracks_kr_info %}
+                <li>
+                    <strong>{{ track.track_name }}</strong><br>
+                    Artists: {{ track.artists | join(", ") }}<br>
+                    <img src="{{ track.album_image[0] }}" alt="Album Art"><br>
+                    {% if track.preview_url %}
+                    <audio controls>
+                        <source src="{{ track.preview_url }}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio><br>
+                    {% else %}
+                    <em>No preview available</em><br>
+                    {% endif %}
+                    Released: {{ track.release_date }}
+                </li>
+                {% endfor %}
+
+            </ul>
+        </div>
+    </div>
+    <form style="padding-left: 20px;" action="/home" method="get" enctype="multipart/form-data">
+        <input type="submit" name="Back" value="Back"/>
+    </form>
+</body>
+</html>
