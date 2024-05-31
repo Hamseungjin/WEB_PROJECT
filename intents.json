@@ -1,0 +1,61 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": [
+        "안녕"
+      ],
+      "responses": [
+        "반가워"
+      ]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["잘가~"],
+      "responses": [
+          "응"
+      ]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["고마워!"],
+      "responses": ["그래"]
+    },
+    {
+      "tag": "items",
+      "patterns": [
+        "‘구강(九綱)’. ‘편광(偏光)’. ‘까마귀와 성명(聲明)’. ‘표리의 틈새’."
+      ],
+      "responses": [
+        "무라사키"
+      ]
+    },
+    {
+      "tag": "payments",
+      "patterns": [
+        "결제할게~"
+      ],
+      "responses": [
+        "응"
+      ]
+    },
+    {
+      "tag": "delivery",
+      "patterns": [
+        "배달"
+      ],
+      "responses": [
+        "응"
+      ]
+    },
+    {
+      "tag": "funny",
+      "patterns": [
+        "다들 밥 먹었 수산 시장? 내가 요즘 밀고 있는 유행어수산시장"
+      ],
+      "responses": [
+        "수산끼얏호우~"
+      ]
+    }
+  ]
+}
