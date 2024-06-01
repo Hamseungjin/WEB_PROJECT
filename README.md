@@ -34,12 +34,18 @@ this is spotify recommender webservice
 #  Flow 
 
 1. http://127.0.0.1:5000/
-![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f74e97e9-0955-4f23-b2de-63a82e61efce)
+![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/c889990e-80be-4239-b7bd-7ee0790ebeaf)
+![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/5a30d3d6-4d42-4998-97cf-cc4c231ddc84)
+![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/4d9f9fa3-11ae-485a-8c2f-5f212ada6ec8)
+
 
 2. https://accounts.spotify.com/ko/authorize: spotify login page  ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/edcc3246-a8d5-4547-901b-a5fee120f129)
 
 
 3. http://localhost:5000/home: List of Servicesc ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f5c4fb81-2772-480d-8a70-bf762e76fdd6)
+
+List of Servicesc(not subscriber) ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/a0c3d130-7108-41b9-9cf0-027619870efe)
+
 
 4. http://localhost:5000/playlists: user's Playlists ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/701fccf2-a3bb-40ab-85f7-32011bf80d45)
 
@@ -47,7 +53,7 @@ this is spotify recommender webservice
 
 6. http://localhost:5000/artists: user's Most Listened To Artists ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/3206f2c1-cad1-4148-a851-f5b6d43d0859)
 
-7. http://localhost:5000/recommendations: Recommended user songs ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/91bc83d3-4b86-4fbc-a3ca-278cf3a20703)
+7. http://localhost:5000/recommendations: Recommended user songs ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/fc22e3a0-9658-4233-a9f7-ecc823651055)
 
 8. http://localhost:5000/top_tracks_recommendations: Recommended Top tracks ![image](https://github.com/Hamseungjin/WEB_PROJECT/assets/109064686/f7558469-bf71-415e-ae72-70747fdf1458)
 
