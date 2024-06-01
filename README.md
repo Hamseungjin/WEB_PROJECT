@@ -146,3 +146,43 @@ REFERENCE, https://developer.spotify.com/documentation/web-api/reference/get-rec
 - [Florian](https://github.com/Florian-Fogliani)
 - [Doh yun KIM](https://github.com/neeewbieee)
 
+
+# Install
+
+
+## ㅁ Dependecy install(챗봇에 필요한)
+
+### step 1.1) pip install Flask torch torchvision nltk (10~15분 소요됨.)
+
+comment: 만약 WARNING: There was an error checking the latest version of pip. 경고창이 나오면, pip 최신버전 바꾸기 (2024/06/01 Pycharm IDE창 기준 2.4.0 최신형 ) 그리고 IDE 나갔다 들어오기.
+
+### step 1.2) python 실행하고
+
+### step 1.2.1) import nltk
+
+### step 1.2.2) nltk.download( 'punkt' )
+
+### step 1.2.3) quit()
+
+## ㅁ  백엔드에 필요한 설치
+
+
+### step 2) requests, flask, pymongo install(app.py 들어가서 import에서 설치하기.)
+
+
+## ㅁ 챗봇 훈련
+
+
+### step 3.1) intents.json(챗봇에 질문할 내용, 대답할 내용, 태그 튜닝)
+ 
+
+###  step 3.2) python train.py (intents.json기반으로 훈련 )
+
+=> final loss: 0.1 미만나와야함.
+
+
+### step 3.3) python chat.py(intents.json기반으로 테스트 )
+
+
+### step 3.4) quit
+
