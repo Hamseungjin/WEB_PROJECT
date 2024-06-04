@@ -1,0 +1,64 @@
+{% extends "layout/layout.html" %}
+{% block title %} playlist {% endblock %}
+{% block content %}
+
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Cart</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Pages</a></li>
+            <li class="breadcrumb-item active text-white">Cart</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+        <div class="container-fluid py-5">
+            <div class="container py-5">
+                <button class="btn btn-primary" onclick="goBack()">Back</button>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                          <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Name</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            {% if playlists %} 
+                            {% for playlist in playlists %}
+                            <tr>
+                                <th scope="row">
+                                    {% for image in playlist['images'] %}
+                                    <div class="d-flex align-items-center">
+                                        <img rc="{{ image }}" alt="Playlist Image" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;">
+                                    </div>
+                                    {% endfor %}
+                                </th>
+                                <td>
+                                    <p class="mb-0 mt-4">{{ playlist['name'] }}</p>
+                                </td>
+                            {% endfor %} 
+                            {% else %}
+                            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                  </svg>
+                                <div>
+                                No playlists found.
+                                </div>
+                            </div>
+                                
+                            {% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+ 
+
+{% endblock %}
