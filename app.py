@@ -1,5 +1,4 @@
 import os
-
 import requests
 from requests import post, get
 import json
@@ -8,12 +7,14 @@ import datetime
 from flask import Flask, redirect, request, jsonify, session, render_template
 import flask
 from pymongo import MongoClient
+from chat import get_response
 
-app = Flask(__name__)
+app=Flask(__name__)
 
-client_id = '36b258fc1e66468eb7b030418e2363c0'
-client_secret = 'e1dd5b9ba7884a8ea1480c474e579200'
-app.secret_key = 'hsjking0403@naver.com'
+""" --------------------------------------------------------------------------------------------------------- """
+client_id = os.getenv("client_id")
+client_secret = os.getenv("client_secret")
+app.secret_key = os.getenv("secret_key")
 """ --------------------------------------------------------------------------------------------------------- """
 
 # MongoDB connection setup
@@ -58,12 +59,17 @@ recommendations_collection = db_recommend['recommendations'] # recommended songs
 
 """ --------------------------------------------------------------------------------------------------------- """
 
-@app.route('/')
-def index():
-    """Index page of app"""
-    # return "See Spotify Data <a href='/login'> Login with Spotify </a>"
-    return flask.render_template("index.html")
+@app.get("/")
+def index_get():
+    return render_template("base.html")
 
+@app.post("/predict")
+def predict():
+    text=request.get_json().get("message")
+    # TODO : check if text is vaild
+    response = get_response(text)
+    message={"answer":response}
+    return jsonify(message)
 
 @app.route('/login')
 def login():
@@ -82,16 +88,15 @@ def login():
     # http://localhost:5000/callback?error=access_denied경우 index.html로 이동
     return redirect(auth_url)
 
-
 @app.route('/callback')
 def callback():
     """Handle login response"""
-    # 로그인 후 Spotify에서 전달된 인증 코드를 받아 액세스 토큰을 요청하고, 토큰을 세션에 저장
-
-    # if there is an error
+    # Check for errors in the callback
     if 'error' in request.args:
-        return flask.render_template("index.html")
+        # Handle error (e.g., user denied the authorization)
+        return flask.render_template("index.html", error="Authorization failed.")
 
+    # Handle the response after user has logged in
     if 'code' in request.args:
         body = {
             'code': request.args['code'],
@@ -101,31 +106,48 @@ def callback():
             'client_secret': client_secret
         }
 
-        # get request
+        # Exchange code for an access token
         url = "https://accounts.spotify.com/api/token"
         response = post(url, data=body)
         token_info = response.json()
 
-        # store important info
+        # Store tokens and expiry in session
         session['access_token'] = token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']
         session['expires'] = datetime.datetime.now().timestamp() + token_info['expires_in']
 
-        return redirect('/home')
+        # Verify if the user is a paid subscriber
+        return verify_subscription()
 
+    return redirect('/')
+
+def verify_subscription():
+    """Verify if the logged-in user is a paid subscriber."""
+    if 'access_token' not in session or datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/login')
+
+    headers = {'Authorization': f"Bearer {session['access_token']}"}
+    response = get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
+    data = response.json()
+
+    # Check if the data includes top tracks, which indicates a paid subscription
+    if not data.get('items'):
+        # No top tracks available, user might not be a paid subscriber
+        session['is_subscriber'] = False
+    else:
+        # Data is available, user is a paid subscriber
+        session['is_subscriber'] = True
+
+    return redirect('/home')
 
 @app.route('/home')
 def home_page():
+    """Landing page that checks user subscription status."""
+    if not session.get('is_subscriber', False):
+        # If the user is not a subscriber, restrict access to certain features
+        return render_template("unauthorized.html", message="This feature is available for paid subscribers only.")
 
-    """Landing page"""
-    # 사용자의 액세스 토큰이 있는지 확인하고 만료되지 않았는지 확인한 후, 메인 페이지를 렌더링
-    # error checking
-    if 'access_token' not in session:
-        return redirect('/login')
-
-    if datetime.datetime.now().timestamp() > session['expires']:
-        return redirect('/refresh-token')
-
+    # Proceed to render the home page for subscribers
     return flask.render_template("landing.html")
 
 
@@ -133,6 +155,8 @@ def home_page():
 def get_playlists():
     """Get playlists"""
     #사용자의 플레이리스트를 가져와 템플릿에 표시
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -182,6 +206,8 @@ def get_playlists():
 def get_songs():
     """Get top songs"""
     # 사용자의 인기 트랙을 가져와 템플릿에 표시
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -242,6 +268,8 @@ def get_artists():
 
     """Get top artists"""
     # 사용자의 인기 아티스트를 가져와 템플릿에 표시
+    if not session.get('is_subscriber', False):
+        return render_template("unauthorized.html")
 
     # error checking
     if 'access_token' not in session:
