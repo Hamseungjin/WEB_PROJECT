@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <title>{% block title %}Spotify?{% endblock %}</title>
+
+        <!-- Google Web Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Raleway:wght@600;800&display=swap" rel="stylesheet"> 
+
+        <!-- Customized Bootstrap Stylesheet -->
+        <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="../static/css/style.css" rel="stylesheet">
+
+        <!-- chatbot Stylesheet -->
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css" integrity="sha384-X38yfunGUhNzHpBaEBsWLO+A0HDYOQi8ufWDkZ0k9e0eXz/tH3II7uKZ9msv++Ls" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    </head>
+
+    <body style="background-color:black">
+        
+    
+    <!-- content start -->
+
+        <div style="padding: 40px"></div>
+
+        <div class="text-center mx-auto mb-5" style="max-width: 1000px;">
+            <h1 class="display-1" style="font-size: 8rem; color:#dee2e6">SEE YOUR SPOTIFY DATA</h1>
+            <p class="display-1" style="font-size: 1.5rem"><a href="/login">Click here to login!</a></p>
+        </div>
+
+    <!-- content end -->
+
+
+    <!-- chatbot start -->
+    <div class="container">
+        <div class="chatbox">
+            <div class="chatbox__support">
+                <div class="chatbox__header">
+                    <div class="chatbox__image--header">
+                        <img src="{{ url_for('static', filename='images/kanye.jpg') }}" />
+                    </div>
+                    <div class="chatbox__content--header">
+                        <h4 class="chatbox__heading--header">Chat Support</h4>
+                        <p class="chatbox__description--header">G.O.A.T</p>
+                    </div>
+                </div>
+                <div class="chatbox__messages">
+                    <div></div>
+                </div>
+                <div class="chatbox__footer">
+                    <input type="text" placeholder="Write a message...">
+                    <button class="chatbox__send--footer send__button">Send</button>
+                </div>
+            </div>
+            <div class="chatbox__button">
+                <button><img src="../static/images/chatbox-icon.svg" /></button>
+            </div>
+        </div>
+    </div>
+
+    <script>$SCRIPT_ROOT = {{ request.script_root|tojson }};</script>
+    <script src="../static/app.js"></script>
+
+    <!-- chatbot end -->
+
+    </body>
+
+</html>
