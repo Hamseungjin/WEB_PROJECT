@@ -2,49 +2,20 @@
 
 {% block content %}
 
-<!-- partial:index.partial.html -->
+<!-- Include Splitting.js library -->
+<script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
+
 <div id='timeline'>
   <div class='row'>
+    {% for info in recommend_info %}
     <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
+      <div class='sleeve' style="background-image: url('{{ info.album_image_url }}');"></div>
+      <div class='text'>
+        <span data-splitting>{{ info.artist_name }} • {{ info.track_name }} • </span>
+      </div>
     </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
-    <div class='album'>
-      <div class='sleeve'></div>
-      <div class='text'></div>
-    </div>
+    {% endfor %}
   </div>
 </div>
 <div id='wrap'>

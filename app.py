@@ -60,7 +60,7 @@ recommendations_collection = db_recommend['recommendations'] # recommended songs
 
 @app.get("/")
 def index_get():
-    return render_template("base.html")
+    return render_template("start.html")
 
 @app.post("/predict")
 def predict():
@@ -429,14 +429,10 @@ def global_and_kr_tendency():
     return render_template("global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
 
 
-
-@app.route('/recommendations')
+@app.route('/songlist')
 def get_recommendations():
-
     """Get recommended songs"""
-     # 사용자의 인기 아티스트를 기반으로 추천 음악을 가져와 템플릿에 표시
-
-    # error checking
+    # Check for access token in session
     if 'access_token' not in session:
         return redirect('/login')
 
@@ -447,43 +443,37 @@ def get_recommendations():
         'Authorization': f"Bearer {session['access_token']}"
     }
 
-    # get seed artist ids
+    # Get seed artist IDs
     response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
     data = response.json()
 
-    if data['total'] == 0: # Check if no artists were found
-        # Send the HTTP GET request to the Spotify API for the top tracks
-        response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10', headers=headers)
+    if data['total'] == 0:  # Check if no artists were found
+        response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10',
+                                headers=headers)
         top_tracks = response.json()['items']
         recommend_info = []
 
         for track in top_tracks:
-            # Extract track details
             track_name = track['track']['name']
             artists = [artist['name'] for artist in track['track']['artists']]
             album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
-            release_date = track['track']['album']['release_date']  # Extract release date
+            release_date = track['track']['album']['release_date']
 
-            # Prepare recommendation data to be stored
             recommendation_data = {
                 "artist_name": artists,
                 "track_name": track_name,
                 "album_image_url": album_image_url,
-                "release_date":release_date,
+                "release_date": release_date,
             }
 
-            # 데이터 중복 확인
             existing_data = top_tracks_collection.find_one({
                 "artist_name": recommendation_data["artist_name"],
                 "track_name": recommendation_data["track_name"]
-                # 이 외에도 필요한 조건을 추가할 수 있습니다 (예: release_date 등)
             })
 
             if existing_data is None:
-                # MongoDB에 저장
                 top_tracks_collection.insert_one(recommendation_data)
 
-            # Add to recommend_info list for rendering
             recommend_info.append(recommendation_data)
 
         return render_template("global_top_tracks.html", recommend_info=recommend_info)
@@ -491,13 +481,11 @@ def get_recommendations():
     ids = [item["id"] for item in data["items"]]
     artist_ids = ','.join(ids)
 
-    # get recommendations with artist id as input
-    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=100", headers=headers,timeout=10)
+    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=50", headers=headers,
+                   timeout=10)
     recommendations = response.json()
     recommend_info = []
 
-
-    # Assuming 'recommendations' is the JSON response from Spotify API
     for track in recommendations['tracks']:
         artists = ", ".join([artist['name'] for artist in track['artists']])
         track_name = track['name']
@@ -505,24 +493,20 @@ def get_recommendations():
         album_image_url = track['album']['images'][0]['url']
 
         if preview_url is not None:
-            # Check if the recommendation already exists in MongoDB
             if not recommendations_collection.find_one({
                 "artist_name": artists,
                 "track_name": track_name
             }):
-                # Prepare recommendation data to be stored
                 recommendation_data = {
                     "artist_name": artists,
                     "track_name": track_name,
                     "preview_url": preview_url,
                     "album_image_url": album_image_url
                 }
-                # Add to recommend_info list for rendering
                 recommend_info.append(recommendation_data)
-                # Insert into MongoDB to avoid duplicates
                 recommendations_collection.insert_one(recommendation_data)
-    return render_template("recommendations.html", recommend_info=recommend_info)
 
+    return render_template("songlist.html", recommend_info=recommend_info)
 
 @app.route('/refresh-token')
 def refresh_token():
@@ -558,9 +542,6 @@ def checkLayout():
 def check():
     return render_template("playlist.html")
 
-@app.route("/songlist")
-def songlist():
-    return render_template("songlist.html")
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
