@@ -9,7 +9,7 @@
 <div id='timeline'>
   <div class='row'>
     {% for info in recommend_info %}
-    <div class='album'>
+    <div class='album' data-preview-url="{{ info.preview_url }}">
       <div class='sleeve' style="background-image: url('{{ info.album_image_url }}');"></div>
       <div class='text'>
         <span data-splitting>{{ info.artist_name }} • {{ info.track_name }} • </span>
@@ -21,6 +21,6 @@
 <div id='wrap'>
   <div id='inner'></div>
 </div>
-<audio id='audio' preload='' src=''></audio>
+<audio id='audio' preload=''></audio>
 
 {% endblock %}

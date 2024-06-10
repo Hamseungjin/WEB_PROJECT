@@ -41,12 +41,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.querySelectorAll(".sleeve").forEach((album, index) => {
-        const albumImage = album.style.backgroundImage;
-        const audioSrc = album.getAttribute('data-audio-src');
+    document.querySelectorAll(".album").forEach((album, index) => {
+        const previewUrl = album.getAttribute('data-preview-url');
         album.addEventListener("mouseover", function () {
-            if (!playing && audioSrc) {
-                audio.setAttribute("src", audioSrc);
+            if (!playing && previewUrl) {
+                audio.setAttribute("src", previewUrl);
             }
         });
         album.addEventListener("click", function () {
