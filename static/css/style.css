@@ -25,6 +25,7 @@
     transition: 0.5s;
     z-index: 99;
 }
+
  .btn-fixed {
     position: fixed;
     right: 30px;
@@ -36,6 +37,7 @@
     transition: 0.5s;
     z-index: 99;
 }
+
 /*** Spinner End ***/
 
 
@@ -189,7 +191,9 @@
 
 /*** Hero Header ***/
 .hero-header {
+
     background: black;
+
     background-position: center center;
     background-repeat: no-repeat;
     background-size: cover;
