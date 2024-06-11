@@ -518,7 +518,7 @@ def get_recommendations():
     ids = [item["id"] for item in data["items"]]
     artist_ids = ','.join(ids)
 
-    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=50", headers=headers,
+    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=100", headers=headers,
                    timeout=10)
     recommendations = response.json()
     recommend_info = []
@@ -527,21 +527,17 @@ def get_recommendations():
         artists = ", ".join([artist['name'] for artist in track['artists']])
         track_name = track['name']
         preview_url = track['preview_url']
-        album_image_url = track['album']['images'][0]['url']
+        album_image_url = track['album']['images'][1]['url']
 
         if preview_url is not None:
-            if not recommendations_collection.find_one({
+            recommendation_data = {
                 "artist_name": artists,
-                "track_name": track_name
-            }):
-                recommendation_data = {
-                    "artist_name": artists,
-                    "track_name": track_name,
-                    "preview_url": preview_url,
-                    "album_image_url": album_image_url
-                }
-                recommend_info.append(recommendation_data)
-                recommendations_collection.insert_one(recommendation_data)
+                "track_name": track_name,
+                "preview_url": preview_url,
+                "album_image_url": album_image_url
+            }
+            recommend_info.append(recommendation_data)
+            recommendations_collection.insert_one(recommendation_data)
 
     return render_template("songlist.html", recommend_info=recommend_info)
 
