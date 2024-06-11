@@ -147,7 +147,7 @@ def home_page():
     """Landing page that checks user subscription status."""
     if not session.get('is_subscriber', False):
         # If the user is not a subscriber, restrict access to certain features
-        return render_template("unauthorized.html", message="This feature is available for paid subscribers only.")
+        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.")
 
 
     headers = {
