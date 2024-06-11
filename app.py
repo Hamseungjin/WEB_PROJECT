@@ -583,6 +583,15 @@ def check():
 def songlist():
     return render_template("songlist.html")
 
+@app.route("/reviewList")
+def reviewList():
+    return render_template("reviewList.html")
+
+
+@app.route("/review")
+def review():
+    return render_template("review.html")
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', debug=True, port=5000)
