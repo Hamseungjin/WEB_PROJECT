@@ -25,7 +25,7 @@ model = NeuralNet(input_size, hidden_size, output_size).to(device)
 model.load_state_dict(model_state)
 model.eval()
 
-bot_name = "Sam"
+bot_name = "GOAT"
 
 def get_response(msg):
     sentence = tokenize(msg)
@@ -45,7 +45,7 @@ def get_response(msg):
             if tag == intent["tag"]:
                 return random.choice(intent['responses'])
     
-    return "I do not understand..."
+    return "몰?루"
 
 
 if __name__ == "__main__":
