@@ -202,7 +202,7 @@ def get_playlists():
                 'images': images
             })
     # Retrieve all playlists from MongoDB for rendering
-    return render_template("cart.html", playlists=p)
+    return render_template("playlist.html", playlists=p)
 
 @app.route('/songs')
 def get_songs():
