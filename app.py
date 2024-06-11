@@ -96,7 +96,7 @@ def callback():
     # Check for errors in the callback
     if 'error' in request.args:
         # Handle error (e.g., user denied the authorization)
-        return flask.render_template("index.html", error="Authorization failed.")
+        return flask.render_template("start.html", error="Authorization failed.")
 
     # Handle the response after user has logged in
     if 'code' in request.args:
@@ -149,8 +149,41 @@ def home_page():
         # If the user is not a subscriber, restrict access to certain features
         return render_template("unauthorized.html", message="This feature is available for paid subscribers only.")
 
+
+    headers = {
+            'Authorization': f"Bearer {session['access_token']}"
+        }
+    
+    # 인기곡 -대한 민국(주간)
+    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20', headers=headers)
+    top_tracks_kr = response.json()['items']
+
+    top_tracks_kr_info=[]
+
+    for track in top_tracks_kr:
+        # Extract track details
+        track_name = track['track']['name']
+        artists = [artist['name'] for artist in track['track']['artists']]
+        album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+        preview_url = track['track']['preview_url']
+        release_date = track['track']['album']['release_date']
+
+        data_kr=({
+            'track_name': track_name,
+            'artists': artists,
+            'album_image': album_images,
+            'preview_url': preview_url,
+            'release_date': release_date
+        })
+        # MongoDB에 중복 삽입 방지
+        if not kr_top_collection.find_one({'track_name': track_name, 'artists': artists}):
+            kr_top_collection.insert_one(data_kr)
+        # Add to recommend_info list for rendering
+        top_tracks_kr_info.append(data_kr)
+
+    
     # Proceed to render the home page for subscribers
-    return flask.render_template("main.html")
+    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info)
 
 
 @app.route('/playlists')
@@ -309,6 +342,7 @@ def get_artists():
             else:
                 artists_info.append(existing_artist)
     return render_template("artists.html", artists_info=artists_info)
+
 @app.route('/global_top_tracks')
 def global_top_tracks():
     # error checking
