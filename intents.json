@@ -3,17 +3,21 @@
     {
       "tag": "greeting",
       "patterns": [
-        "안녕"
+        "hello"
       ],
       "responses": [
-        "반가워"
+        "good morning"
       ]
     },
     {
       "tag": "goodbye",
-      "patterns": ["잘가~"],
+      "patterns": [
+        "잘가~",
+        "안녕"
+      ],
       "responses": [
-          "응"
+          "응",
+        "잘 가"
       ]
     },
     {

@@ -30,7 +30,6 @@
     </head>
 
     <body>
-        {% include 'header.html' %}
         <div class="container-fluid py-5">
             <div class="container py-5">
                 <button class="btn btn-primary" onclick="goBack()">Back</button>
@@ -49,7 +48,7 @@
                                 <th scope="row">
                                     {% for image in playlist['images'] %}
                                     <div class="d-flex align-items-center">
-                                        <img rc="{{ image }}" alt="Playlist Image" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;">
+                                        <img src="{{ image }}" alt="Playlist Image" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;">
                                     </div>
                                     {% endfor %}
                                 </th>
@@ -92,7 +91,6 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    {% include 'footer.html' %}
     </body>
 
 </html>
