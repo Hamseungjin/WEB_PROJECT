@@ -144,11 +144,6 @@ def verify_subscription():
 
 @app.route('/home')
 def home_page():
-    """Landing page that checks user subscription status."""
-    if not session.get('is_subscriber', False):
-        # If the user is not a subscriber, restrict access to certain features
-        return render_template("unauthorized.html", message="This feature is available for paid subscribers only.")
-
 
     headers = {
             'Authorization': f"Bearer {session['access_token']}"
@@ -158,7 +153,12 @@ def home_page():
     response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20', headers=headers)
     top_tracks_kr = response.json()['items']
 
+    # 국내외 신곡들 (매주 업데이트)
+    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=20', headers=headers)
+    recent_tracks = response_2.json()['items']
+
     top_tracks_kr_info=[]
+    recent_tracks_info=[]
 
     for track in top_tracks_kr:
         # Extract track details
@@ -181,9 +181,38 @@ def home_page():
         # Add to recommend_info list for rendering
         top_tracks_kr_info.append(data_kr)
 
+    for track in recent_tracks:
+        # Extract track details
+        track_name = track['track']['name']
+        artists = [artist['name'] for artist in track['track']['artists']]
+        album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+        preview_url = track['track']['preview_url']
+        release_date = track['track']['album']['release_date']
+
+        data_recent_tracks=({
+            'track_name': track_name,
+            'artists': artists,
+            'album_image': album_images,
+            'preview_url': preview_url,
+            'release_date': release_date
+        })
+        # MongoDB에 중복 삽입 방지
+        if not global_latest_tracks_collection.find_one({'track_name': track_name, 'artists': artists}):
+            global_latest_tracks_collection.insert_one(data_recent_tracks)
+        # Add to recommend_info list for rendering
+        recent_tracks_info.append(data_recent_tracks)
+
+    
+    """Landing page that checks user subscription status."""
+    if not session.get('is_subscriber', False):
+        # If the user is not a subscriber, restrict access to certain features
+        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.", top_tracks_kr_info=top_tracks_kr_info,  recent_tracks_info=recent_tracks_info)
+
+
+
     
     # Proceed to render the home page for subscribers
-    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info)
+    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info)
 
 
 @app.route('/playlists')
@@ -463,6 +492,7 @@ def global_and_kr_tendency():
             global_latest_tracks_collection.insert_one(data_recent_tracks)
         # Add to recommend_info list for rendering
         recent_tracks_info.append(data_recent_tracks)
+
     return render_template("global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
 
 
@@ -578,6 +608,15 @@ def check():
 @app.route("/song")
 def songlist():
     return render_template("songlist.html")
+
+@app.route("/reviewList")
+def reviewList():
+    return render_template("reviewList.html")
+
+
+@app.route("/review")
+def review():
+    return render_template("review.html")
 
 
 if __name__ == '__main__':
