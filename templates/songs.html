@@ -1,34 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Songs</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/purecss@3.0.0/build/pure-min.css">
-</head>
-<body>
-    <div style="padding-left: 20px;">
-        <h1>Your Most Listened To Songs</h1>
-        <ul>
-            {% for track in tracks_info %}
-                <li>
-                    <strong>{{ track['track_name'] }}</strong> by {{ track['artist_name'] }}
-                    {% if track['album_images'] %}
-                        <br>
-                        <img src="{{ track['album_images'][0] }}" alt="Album Cover" >
-                    {% endif %}
-                    {% if track['preview_url'] %}
+{% extends "layout/layout.html" %}
+{% block title %} Playlists {% endblock %}
+{% block content %}
+
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6">Cart</h1>
+        <ol class="breadcrumb justify-content-center mb-0">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Most listened songs</a></li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <button class="btn btn-primary" onclick="goBack()">Back</button>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col"></th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Artist</th>
+                        <th scope="col">Preview</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if tracks_info %} 
+                        {% for track in tracks_info%}
+                        <tr>
+                            <th scope="row">
+                                {% for image in track['album_images'] %}
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ image }}" alt="Playlist Image" class="img-fluid me-5 rounded" style="width: 80px; height: 80px;">
+                                </div>
+                                {% endfor %}
+                            </th>
+                            <td>
+                                <p class="mb-0 mt-4">{{ track['track_name'] }}</p>
+                            </td>
+                            <td>
+                                <p class="mb-0 mt-4">{{ track['artist_name'] }}</p>
+                            </td>
+                            <td>
+                                {% if track['preview_url'] %}
                         <br>
                         <audio controls>
                             <source src="{{ track['preview_url'] }}" type="audio/mp3">
                         </audio>
                     {% endif %}
-                </li>
-            {% endfor %}
-        </ul>
+                            </td>
+                        {% endfor %} 
+                        {% else %}
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                </svg>
+                            <div>
+                            No playlists found.
+                            </div>
+                        </div>
+                            
+                        {% endif %}
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-    <form style="padding-left: 20px;" action="/home" method="get">
-        <input type="submit" value="Back">
-    </form>
-</body>
-</html>
+
+
+ 
+
+{% endblock %}
