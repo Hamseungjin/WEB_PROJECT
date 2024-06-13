@@ -1,31 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recommended Songs</title>
-</head>
-<body>
-    <h1>Recommended Songs</h1>
 
-    {% if recommend_info %}
-        <div>
-            {% for info in recommend_info %}
-                <div>
-                    <h2>{{ info.track_name }}</h2>
-                    <p>By: {{ info.artist_name|join(', ') }}</p>
-                    {% if info.album_image_url %}
-                        <img src="{{ info.album_image_url[0] }}" alt="Album Image">
-                    {% endif %}
-                    <p>Release Date: {{ info.release_date }}</p>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>No recommendations available.</p>
-    {% endif %}
-    <form style="padding-left: 20px;" action="/home" method="get" enctype="multipart/form-data">
-        <input type="submit" name="Back" value="Back"/>
-    </form>
-</body>
-</html>
+
+{% extends "layout/recmmdLayout.html" %}
+{%block title%} Global Top Tracks {% endblock %}
+{% block content %}
+
+<!-- Splitting.js 라이브러리 포함 -->
+<script src="https://unpkg.com/splitting/dist/splitting.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/splitting/dist/splitting.css">
+
+<div id="timeline">
+  <div class="row">
+    {% for info in recommend_info[:10] %}
+    <div class="album" data-track-name="{{ info.track_name }}" data-artist-name="{{ info.artist_name }}">
+      <audio id="audio" preload="" data-preview-url="{{ info.preview_url }}"></audio>
+      <div class="sleeve" data-image-url="{{ info.album_image_url }}" style="background-image: url('{{ info.album_image_url[0] }}');"></div>
+      <div class="text"><span data-splitting>{{ info.track_name }} • {{ info.artist_name }}</span></div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+<div id="wrap">
+  <div id="inner"></div>
+</div>
+
+{% endblock %}
