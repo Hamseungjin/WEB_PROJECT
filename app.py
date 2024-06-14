@@ -94,15 +94,16 @@ def login():
     # http://localhost:5000/callback?error=access_denied경우 index.html로 이동
     return redirect(auth_url)
 
+
 @app.route('/callback')
 def callback():
-    """Handle login response"""
-    # Check for errors in the callback
+    """로그인 응답 처리"""
+    # 콜백에서 오류가 있는지 확인
     if 'error' in request.args:
-        # Handle error (e.g., user denied the authorization)
+        # 오류 처리 (예: 사용자가 승인을 거부한 경우)
         return flask.render_template("start.html", error="Authorization failed.")
 
-    # Handle the response after user has logged in
+    # 사용자가 로그인한 후 응답 처리
     if 'code' in request.args:
         body = {
             'code': request.args['code'],
@@ -112,23 +113,37 @@ def callback():
             'client_secret': client_secret
         }
 
-        # Exchange code for an access token
+        # 코드를 액세스 토큰으로 교환
         url = "https://accounts.spotify.com/api/token"
         response = post(url, data=body)
         token_info = response.json()
 
-        # Store tokens and expiry in session
+        # 토큰과 만료 시간을 세션에 저장
         session['access_token'] = token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']
         session['expires'] = datetime.datetime.now().timestamp() + token_info['expires_in']
 
-        # Verify if the user is a paid subscriber
-        return verify_subscription()
+        # Spotify로부터 사용자 정보 가져오기
+        user_info = get_user_info()
+
+        # 구독자 여부 확인
+        return verify_subscription(user_info)
 
     return redirect('/')
 
-def verify_subscription():
-    """Verify if the logged-in user is a paid subscriber."""
+
+def get_user_info():
+    """Spotify로부터 사용자 정보 가져오기"""
+    if 'access_token' not in session or datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/login')
+
+    headers = {'Authorization': f"Bearer {session['access_token']}"}
+    response = get("https://api.spotify.com/v1/me", headers=headers)
+    return response.json()
+
+
+def verify_subscription(user_info):
+    """로그인한 사용자가 유료 구독자인지 확인"""
     if 'access_token' not in session or datetime.datetime.now().timestamp() > session['expires']:
         return redirect('/login')
 
@@ -136,90 +151,107 @@ def verify_subscription():
     response = get("https://api.spotify.com/v1/me/top/tracks", headers=headers)
     data = response.json()
 
-    # Check if the data includes top tracks, which indicates a paid subscription
+    # 데이터에 상위 트랙이 있는지 확인하여 유료 구독자인지 확인
     if not data.get('items'):
-        # No top tracks available, user might not be a paid subscriber
+        # 상위 트랙이 없으면 사용자가 유료 구독자가 아닐 수 있음
         session['is_subscriber'] = False
     else:
-        # Data is available, user is a paid subscriber
+        # 데이터가 있으면 사용자가 유료 구독자임
         session['is_subscriber'] = True
+
+    # 사용자가 관리자(admin)인지 확인 (예: 이메일로 확인)
+    if user_info['email'] == 'a01079072289@gmail.com':  # 관리자 이메일로 변경
+        session['is_admin'] = True
+    else:
+        session['is_admin'] = False
 
     return redirect('/home')
 
 @app.route('/home')
 def home_page():
+    # 세션에 access_token이 없거나 만료되었으면 로그인 페이지로 리디렉션
+    if 'access_token' not in session or datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/login')
 
     headers = {
-            'Authorization': f"Bearer {session['access_token']}"
-        }
-    
-    # 인기곡 -대한 민국(주간)
-    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20', headers=headers)
+        'Authorization': f"Bearer {session['access_token']}"
+    }
+
+    # 인기곡 - 대한 민국 (주간)
+    response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbJZGli0rRP3r/tracks?limit=20',
+                            headers=headers)
     top_tracks_kr = response.json()['items']
 
     # 국내외 신곡들 (매주 업데이트)
-    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=20', headers=headers)
+    response_2 = requests.get('https://api.spotify.com/v1/playlists/37i9dQZF1DXdlsL6CGuL98/tracks?limit=20',
+                              headers=headers)
     recent_tracks = response_2.json()['items']
 
-    top_tracks_kr_info=[]
-    recent_tracks_info=[]
+    top_tracks_kr_info = []
+    recent_tracks_info = []
     review_list = []
     for i in review_collection.find():
         review_list.append(i)
 
     for track in top_tracks_kr:
-        # Extract track details
+        # 트랙 세부 정보 추출
         track_name = track['track']['name']
         artists = [artist['name'] for artist in track['track']['artists']]
         album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
         preview_url = track['track']['preview_url']
         release_date = track['track']['album']['release_date']
 
-        data_kr=({
+        data_kr = {
             'track_name': track_name,
             'artists': artists,
             'album_image': album_images,
             'preview_url': preview_url,
             'release_date': release_date
-        })
+        }
         # MongoDB에 중복 삽입 방지
         if not kr_top_collection.find_one({'track_name': track_name, 'artists': artists}):
             kr_top_collection.insert_one(data_kr)
-        # Add to recommend_info list for rendering
+        # 추천 정보 목록에 추가
         top_tracks_kr_info.append(data_kr)
 
     for track in recent_tracks:
-        # Extract track details
+        # 트랙 세부 정보 추출
         track_name = track['track']['name']
         artists = [artist['name'] for artist in track['track']['artists']]
         album_images = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
         preview_url = track['track']['preview_url']
         release_date = track['track']['album']['release_date']
 
-        data_recent_tracks=({
+        data_recent_tracks = {
             'track_name': track_name,
             'artists': artists,
             'album_image': album_images,
             'preview_url': preview_url,
             'release_date': release_date
-        })
+        }
         # MongoDB에 중복 삽입 방지
         if not global_latest_tracks_collection.find_one({'track_name': track_name, 'artists': artists}):
             global_latest_tracks_collection.insert_one(data_recent_tracks)
-        # Add to recommend_info list for rendering
+        # 추천 정보 목록에 추가
         recent_tracks_info.append(data_recent_tracks)
 
-    
-    """Landing page that checks user subscription status."""
+    # 관리자인 경우 main.html 렌더링
+    if session.get('is_admin', False):
+        return flask.render_template("admin_main.html", top_tracks_kr_info=top_tracks_kr_info,
+                                     recent_tracks_info=recent_tracks_info, reviews=review_list)
+
+    """유료 구독자 상태를 확인하는 랜딩 페이지"""
     if not session.get('is_subscriber', False):
-        # If the user is not a subscriber, restrict access to certain features
-        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.", top_tracks_kr_info=top_tracks_kr_info,  recent_tracks_info=recent_tracks_info, reviews = review_list)
+        # 사용자가 구독자가 아닌 경우, 특정 기능에 대한 접근 제한
+        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.",
+                               top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info,
+                               reviews=review_list)
 
 
-
-    
-    # Proceed to render the home page for subscribers
-    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info, reviews = review_list)
+    # 사용자가 구독자이면서, 관리자가 아닌 경우 mainUnauthorized.html 렌더링
+    return render_template("main.html", message="You do not have access to this page.",
+                           top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info,
+                           reviews=review_list)
 
 
 @app.route('/playlist')
