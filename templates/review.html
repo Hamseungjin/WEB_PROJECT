@@ -27,12 +27,12 @@
 
                 <div class="col-lg-12">
                     <div style="padding: 20px"></div>
-                    <form action="" class="">
-                        <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="이름">
-                        <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="도현님 폼 양식에 맞춰서 수정해주세요 ~!">
-                        <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message"></textarea>
+                    <form action="/review" class="" method="POST" enctype="multipart/form-data">
+                        <input type="text" class="w-100 form-control border-0 py-3 mb-4" placeholder="이름" name="writer_name" required>
+                        <textarea class="w-100 form-control border-0 mb-4" rows="5" cols="10" placeholder="Your Message" name="content" maxlength="30" required></textarea>
+                        <input type="file" class="w-100 form-control border-0 py-3 mb-4" name="review_image" accept=".jpg,.jpeg,.png,.gif" required>
                         <div style="padding: 30px"></div>
-                        <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Submit</button>
+                        <button class="w-100 btn form-control border-secondary py-3 bg-white text-primary " type="submit">Post</button>
                     </form>
                 </div>
 
@@ -40,6 +40,5 @@
         </div>
     </div>
 </div>
-
 
 {% endblock %}
