@@ -8,6 +8,7 @@ from flask import Flask, redirect, request, jsonify, session, render_template
 import flask
 from pymongo import MongoClient
 from chat import get_response
+from bson.objectid import ObjectId
 
 app=Flask(__name__)
 """ --------------------------------------------------------------------------------------------------------- """
@@ -24,6 +25,7 @@ client = MongoClient('mongodb://localhost:27017/')  # Assuming MongoDB is runnin
 
 db_user = client['user_spotify_info']
 db_recommend=client['recommendation_info']
+db_review = client['review_info']
 
 # db
 playlists_collection = db_user['playlists'] # user's playlist collection
@@ -39,6 +41,8 @@ kr_top_collection=db_recommend['kr_top_tracks'] # korea_top_tracks collection
 global_latest_tracks_collection=db_recommend['global_latest_tracks'] # worldwide latest track collection
 
 recommendations_collection = db_recommend['recommendations'] # recommended songs collection
+
+review_collection = db_review['review']
 
 
 """ 
@@ -159,6 +163,9 @@ def home_page():
 
     top_tracks_kr_info=[]
     recent_tracks_info=[]
+    review_list = []
+    for i in review_collection.find():
+        review_list.append(i)
 
     for track in top_tracks_kr:
         # Extract track details
@@ -206,13 +213,13 @@ def home_page():
     """Landing page that checks user subscription status."""
     if not session.get('is_subscriber', False):
         # If the user is not a subscriber, restrict access to certain features
-        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.", top_tracks_kr_info=top_tracks_kr_info,  recent_tracks_info=recent_tracks_info)
+        return render_template("mainUnauthorized.html", message="This feature is available for paid subscribers only.", top_tracks_kr_info=top_tracks_kr_info,  recent_tracks_info=recent_tracks_info, reviews = review_list)
 
 
 
     
     # Proceed to render the home page for subscribers
-    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info)
+    return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info, reviews = review_list)
 
 
 @app.route('/playlist')
@@ -608,14 +615,87 @@ def check():
 def songlist():
     return render_template("songlist.html")
 
-@app.route("/reviewList")
+'''@app.route("/reviewList")
 def reviewList():
-    return render_template("reviewList.html")
+    return render_template("reviewList.html")'''
+@app.route("/reviewList", methods=['GET','POST'])
+def reviewList():
+    review_list=[]
+    for i in review_collection.find():
+        review_list.append(i)
+
+    if request.method == 'POST':
+        if request.form['id']:
+            id = request.form['id']
+            id = ObjectId(id)
+            query = {
+                '_id': id
+            }
+            review_collection.delete_one(query)
+            return redirect('/c')
 
 
-@app.route("/review")
+
+    return render_template("reviewList.html", reviews = review_list)
+
+
+'''@app.route("/review")
 def review():
+    return render_template("review.html")'''
+@app.route("/review", methods=['GET','POST'])
+def review():
+    if request.method == 'POST':
+        writer_name = request.form['writer_name']
+        content = request.form['content']
+
+
+        if writer_name and content:
+
+            review_data = {
+                'writer_name': writer_name,
+                'content': content
+            }
+
+            review_collection.insert_one(review_data)
+
+            return redirect('/home')
+
     return render_template("review.html")
+
+
+@app.route('/review_edit/<id>', methods=['GET','POST'])
+def review_edit(id):
+    if request.method == 'POST':
+        if request.form['id']:
+            id = request.form['id']
+            id = ObjectId(id)
+            if request.form['writer_name_edit'] and request.form['content_edit']:
+                writer_name = request.form['writer_name_edit']
+                content = request.form['content_edit']
+                query = {
+                    '_id': id
+                }
+                review_data = {
+                    "$set": {
+                        'writer_name': writer_name,
+                        'content': content
+                    }
+                }
+                review_collection.update_one(query,review_data)
+                return redirect('/home')
+            else:
+                return render_template("review_edit.html", id = id)
+
+    # get details data
+    data = ""
+    try:
+        _id_converted = ObjectId(id)
+        search_filter = {"_id": _id_converted}  # _id is key and _id_converted is the converted _id
+        data = review_collection.find_one(search_filter)  # get one data matched with _id
+    except:
+        print("ID is not found/invalid")
+
+    return render_template("review_edit.html", data=data)
 
 
 if __name__ == '__main__':
