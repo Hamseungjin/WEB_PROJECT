@@ -22,7 +22,6 @@
                 <table class="table">
                     <thead>
                     <tr>
-                        <th scope="col">Profile</th>
                         <th scope="col">Name</th>
                         <th scope="col">Content</th>
                         <th scope="col">Edit</th>
@@ -32,11 +31,6 @@
                     {% for i in reviews %}
                     <tbody>
                         <tr>
-                            <th scope="row">
-                                <div class="d-flex align-items-center">
-                                    <!--<img src="../static/img/vegetable-item-3.png" class="img-fluid me-5 rounded-circle" style="width: 80px; height: 80px;" alt="">-->
-                                </div>
-                            </th>
                             <td>
                                 <p class="mb-0 mt-4">{{i['writer_name']}}</p>
                             </td>
