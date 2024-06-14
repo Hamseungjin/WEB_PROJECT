@@ -5,19 +5,19 @@
 
     <!-- Single Page Header start -->
     <div class="container-fluid page-header py-5">
-        <h1 class="text-center text-white display-6">Cart</h1>
+        <h1 class="text-center text-white display-6">Most Listened Artists</h1>
         <ol class="breadcrumb justify-content-center mb-0">
-            <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item"><a href="#">Most listened artists</a></li>
+            <li class="breadcrumb-item"><a href="/home">Home</a></li>
+            <li class="breadcrumb-item"><a href="#" style="color:white;">Most listened artists</a></li>
         </ol>
     </div>
     <!-- Single Page Header End -->
 
     <div class="container-fluid py-5">
         <div class="container py-5">
-            <button class="btn btn-primary" onclick="goBack()">Back</button>
+            <!-- <button class="btn btn-primary" onclick="goBack()">Back</button> -->
             <div class="table-responsive">
-                <table class="table">
+                <table class="table" style="font-size: larger;">
                     <thead>
                         <tr>
                         <th scope="col"></th>
@@ -31,7 +31,7 @@
                         <tr>
                             <th scope="row">
                                 <div class="d-flex align-items-center">
-                                    <img src="{{ artist['image_320_url'] }}" alt="Playlist Image" class="img-fluid me-5 rounded" style="width: 80px; height: 80px;">
+                                    <img src="{{ artist['image_320_url'] }}" alt="Playlist Image" class="img-fluid me-5 rounded" style="width: 120px; height: 120px;">
                                 </div>
                             </th>
                             <td>
