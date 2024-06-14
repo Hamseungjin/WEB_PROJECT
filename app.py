@@ -632,7 +632,7 @@ def reviewList():
                 '_id': id
             }
             review_collection.delete_one(query)
-            return redirect('/c')
+            return redirect('/home')
 
 
 
