@@ -666,8 +666,6 @@ def reviewList():
             review_collection.delete_one(query)
             return redirect('/home')
 
-
-
     return render_template("reviewList.html", reviews = review_list)
 
 
