@@ -215,12 +215,12 @@ def home_page():
     return flask.render_template("main.html", top_tracks_kr_info=top_tracks_kr_info, recent_tracks_info=recent_tracks_info)
 
 
-@app.route('/playlists')
+@app.route('/playlist')
 def get_playlists():
     """Get playlists"""
     #사용자의 플레이리스트를 가져와 템플릿에 표시
     if not session.get('is_subscriber', False):
-        return render_template("unauthorized.html")
+        return render_template("mainUnauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -264,14 +264,14 @@ def get_playlists():
                 'images': images
             })
     # Retrieve all playlists from MongoDB for rendering
-    return render_template("playlist.html", playlists=p)
+    return render_template("features/playlist.html", playlists=p)
 
 @app.route('/songs')
 def get_songs():
     """Get top songs"""
     # 사용자의 인기 트랙을 가져와 템플릿에 표시
     if not session.get('is_subscriber', False):
-        return render_template("unauthorized.html")
+        return render_template("mainUnauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -324,8 +324,7 @@ def get_songs():
         # Append track_info to tracks_info list
         tracks_info.append(track_info)
 
-    return render_template("songs.html", tracks_info=tracks_info)
-
+    return render_template("features/songs.html", tracks_info=tracks_info)
 
 @app.route('/artists')
 def get_artists():
@@ -333,7 +332,7 @@ def get_artists():
     """Get top artists"""
     # 사용자의 인기 아티스트를 가져와 템플릿에 표시
     if not session.get('is_subscriber', False):
-        return render_template("unauthorized.html")
+        return render_template("mainUnauthorized.html")
 
     # error checking
     if 'access_token' not in session:
@@ -370,7 +369,82 @@ def get_artists():
                 artists_info.append(artist_doc)
             else:
                 artists_info.append(existing_artist)
-    return render_template("artists.html", artists_info=artists_info)
+    return render_template("features/artists.html", artists_info=artists_info)
+
+@app.route('/recommendation')
+def get_recommendations():
+    """Get recommended songs"""
+    # Check for access token in session
+    if 'access_token' not in session:
+        return redirect('/login')
+
+    if datetime.datetime.now().timestamp() > session['expires']:
+        return redirect('/refresh-token')
+
+    headers = {
+        'Authorization': f"Bearer {session['access_token']}"
+    }
+
+    # Get seed artist IDs
+    response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
+    data = response.json()
+
+    if data['total'] == 0:  # Check if no artists were found
+        response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10',
+                                headers=headers)
+        top_tracks = response.json()['items']
+        recommend_info = []
+
+        for track in top_tracks:
+            track_name = track['track']['name']
+            artists = [artist['name'] for artist in track['track']['artists']]
+            album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
+            release_date = track['track']['album']['release_date']
+
+            recommendation_data = {
+                "artist_name": artists,
+                "track_name": track_name,
+                "album_image_url": album_image_url,
+                "release_date": release_date,
+            }
+
+            existing_data = top_tracks_collection.find_one({
+                "artist_name": recommendation_data["artist_name"],
+                "track_name": recommendation_data["track_name"]
+            })
+
+            if existing_data is None:
+                top_tracks_collection.insert_one(recommendation_data)
+
+            recommend_info.append(recommendation_data)
+
+        return render_template("features/global_top_tracks.html", recommend_info=recommend_info)
+
+    ids = [item["id"] for item in data["items"]]
+    artist_ids = ','.join(ids)
+
+    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=100", headers=headers,
+                   timeout=10)
+    recommendations = response.json()
+    recommend_info = []
+
+    for track in recommendations['tracks']:
+        artists = ", ".join([artist['name'] for artist in track['artists']])
+        track_name = track['name']
+        preview_url = track['preview_url']
+        album_image_url = track['album']['images'][1]['url']
+
+        if preview_url is not None:
+            recommendation_data = {
+                "artist_name": artists,
+                "track_name": track_name,
+                "preview_url": preview_url,
+                "album_image_url": album_image_url
+            }
+            recommend_info.append(recommendation_data)
+            recommendations_collection.insert_one(recommendation_data)
+
+    return render_template("features/recommendation.html", recommend_info=recommend_info)
 
 @app.route('/global_top_tracks')
 def global_top_tracks():
@@ -417,8 +491,7 @@ def global_top_tracks():
         # Add to recommend_info list for rendering
         recommend_info.append(recommendation_data)
 
-    return render_template("global_top_tracks.html", recommend_info=recommend_info)
-
+    return render_template("features/global_top_tracks.html", recommend_info=recommend_info)
 
 @app.route('/global_and_kr_tendency')
 # global_and_kr_tendcy
@@ -493,83 +566,9 @@ def global_and_kr_tendency():
         # Add to recommend_info list for rendering
         recent_tracks_info.append(data_recent_tracks)
 
-    return render_template("global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
+    return render_template("features/global_and_kr_tendency.html", recent_tracks_info=recent_tracks_info, top_tracks_kr_info=top_tracks_kr_info)
 
 
-@app.route('/songlist')
-def get_recommendations():
-    """Get recommended songs"""
-    # Check for access token in session
-    if 'access_token' not in session:
-        return redirect('/login')
-
-    if datetime.datetime.now().timestamp() > session['expires']:
-        return redirect('/refresh-token')
-
-    headers = {
-        'Authorization': f"Bearer {session['access_token']}"
-    }
-
-    # Get seed artist IDs
-    response = get("https://api.spotify.com/v1/me/top/artists?limit=5", headers=headers, timeout=10)
-    data = response.json()
-
-    if data['total'] == 0:  # Check if no artists were found
-        response = requests.get('https://api.spotify.com/v1/playlists/37i9dQZEVXbMDoHDwVN2tF/tracks?limit=10',
-                                headers=headers)
-        top_tracks = response.json()['items']
-        recommend_info = []
-
-        for track in top_tracks:
-            track_name = track['track']['name']
-            artists = [artist['name'] for artist in track['track']['artists']]
-            album_image_url = [image['url'] for image in track['track']['album']['images'] if image['height'] == 300]
-            release_date = track['track']['album']['release_date']
-
-            recommendation_data = {
-                "artist_name": artists,
-                "track_name": track_name,
-                "album_image_url": album_image_url,
-                "release_date": release_date,
-            }
-
-            existing_data = top_tracks_collection.find_one({
-                "artist_name": recommendation_data["artist_name"],
-                "track_name": recommendation_data["track_name"]
-            })
-
-            if existing_data is None:
-                top_tracks_collection.insert_one(recommendation_data)
-
-            recommend_info.append(recommendation_data)
-
-        return render_template("global_top_tracks.html", recommend_info=recommend_info)
-
-    ids = [item["id"] for item in data["items"]]
-    artist_ids = ','.join(ids)
-
-    response = get(f"https://api.spotify.com/v1/recommendations?seed_artists={artist_ids}&limit=100", headers=headers,
-                   timeout=10)
-    recommendations = response.json()
-    recommend_info = []
-
-    for track in recommendations['tracks']:
-        artists = ", ".join([artist['name'] for artist in track['artists']])
-        track_name = track['name']
-        preview_url = track['preview_url']
-        album_image_url = track['album']['images'][1]['url']
-
-        if preview_url is not None:
-            recommendation_data = {
-                "artist_name": artists,
-                "track_name": track_name,
-                "preview_url": preview_url,
-                "album_image_url": album_image_url
-            }
-            recommend_info.append(recommendation_data)
-            recommendations_collection.insert_one(recommendation_data)
-
-    return render_template("songlist.html", recommend_info=recommend_info)
 
 @app.route('/refresh-token')
 def refresh_token():
