@@ -327,66 +327,23 @@
                 </div>
                 <!-- review start -->
                 <div class="owl-carousel testimonial-carousel">
+                    {% for i in reviews %}
                     <div class="testimonial-item img-border-radius bg-light rounded p-4">
                         <div class="position-relative">
                             <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
                             <div class="mb-4 pb-4 border-bottom border-secondary">
-                                <p class="mb-0">The website is visually very pleasing. The colors are harmonious and the fonts are well-chosen. The layout is clear and well-organized, making navigation easy.
-                                </p>
+                                <p class="mb-0">{{ i['content'] }}
+                                </p><!--여기가 내용-->
                             </div>
                             <div class="d-flex align-items-center flex-nowrap">
-                                
+
                                 <div class="ms-4 d-block">
-                                    <h4 class="text-dark">François Hollande</h4>
+                                    <h4 class="text-dark">{{ i['writer_name'] }}</h4><!--여기가 이름-->
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                        <div class="position-relative">
-                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                            <div class="mb-4 pb-4 border-bottom border-secondary">
-                                <p class="mb-0">Navigating the site is extremely intuitive. The menus are well-structured and it's easy to find the information you're looking for. Additionally, the site is fully responsive, providing an excellent experience on mobile devices.
-                                </p>
-                            </div>
-                            <div class="d-flex align-items-center flex-nowrap">
-                                
-                                <div class="ms-4 d-block">
-                                    <h4 class="text-dark">John Cena</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                        <div class="position-relative">
-                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                            <div class="mb-4 pb-4 border-bottom border-secondary">
-                                <p class="mb-0">The website loads very quickly, even with an average internet connection. Pages open instantly and there is no noticeable lag.
-                                </p>
-                            </div>
-                            <div class="d-flex align-items-center flex-nowrap">
-                                
-                                <div class="ms-4 d-block">
-                                    <h4 class="text-dark">BTS</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item img-border-radius bg-light rounded p-4">
-                        <div class="position-relative">
-                            <i class="fa fa-quote-right fa-2x text-secondary position-absolute" style="bottom: 30px; right: 0;"></i>
-                            <div class="mb-4 pb-4 border-bottom border-secondary">
-                                <p class="mb-0">The content is of high quality. Articles are well-written, informative, and relevant. Furthermore, the images and videos add extra value to the content.
-                                </p>
-                            </div>
-                            <div class="d-flex align-items-center flex-nowrap">
-                                
-                                <div class="ms-4 d-block">
-                                    <h4 class="text-dark">Daft Punk</h4>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
                 </div>
                 <!-- review end -->
                 <br/>
