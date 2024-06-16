@@ -24,7 +24,6 @@
                     <tr>
                         <th scope="col">Name</th>
                         <th scope="col">Content</th>
-                        <th scope="col">Edit</th>
                         <th scope="col">Delete</th>
                     </tr>
                     </thead>
@@ -32,18 +31,16 @@
                     <tbody>
                         <tr>
                             <td>
-                                <p class="mb-0 mt-4">{{i['writer_name']}}</p>
+                                <p class="mb-3 mt-4">{{i['writer_name']}}</p>
                             </td>
                             <td>
-                                <p class="mb-0 mt-4">{{i['content'][:10]}}</p>
-                            </td>
-                            <td>
-                                <a href="{{ url_for('review_edit', id=i._id) }}" class="btn btn-primary">Edit</a>
+                                <a href="{{ url_for('review_edit', id=i._id) }}"><p class="mb-3 mt-4">{{i['content'][:30]}}</p></a>
+                                
                             </td>
                             <td>
                                 <form action="/reviewList" method="POST">
                                     <input type="hidden" value={{i['_id']}} name="id">
-                                    <button class="btn btn-md rounded-circle bg-light border mt-4" type="submit">
+                                    <button class="btn btn-md rounded-circle bg-light border mb-3 mt-3" type="submit">
                                         <i class="fa fa-times text-danger"></i>
                                     </button>
                                 </form>

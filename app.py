@@ -664,7 +664,7 @@ def reviewList():
                 '_id': id
             }
             review_collection.delete_one(query)
-            return redirect('/home')
+            return redirect('/reviewList')
 
     return render_template("reviewList.html", reviews = review_list)
 
