@@ -127,7 +127,7 @@ GOAT
 
 #### 2.2.3 Frontend
 
-![Figure 2.3 Frontend Flow Chart](Doc_img/Front Flow Chart.png)
+![Figure 2.3 Frontend Flow Chart](Doc_img/FrontFlowChart.png)
 
 ## 3. Recommend System
 
@@ -266,7 +266,7 @@ Step 2 PorterStemmer 알고리즘을 이용하여 단어에서 핵심 의미를 
 
 Step 1 학습에 사용할 데이터 셋을 불러온다.
 
-![Figure 4.1 Train Dataset Structure Example, JSON File](Doc_img/intents_json.png)
+![Figure 4.1 Train Dataset Structure Example, JSON File](Doc_img/Intents-json.png)
 
  Step 2 학습 데이터를 1에 따라 가공한다.
  
