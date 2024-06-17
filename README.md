@@ -94,7 +94,7 @@ GOAT
 
 1. Spotify Session Flow Chart
 
-![Figure 2.2 Spotify Api Session Flow Chart](path_to_image)
+![Figure 2.2 Spotify Api Session Flow Chart](Doc_img/auauth-code-flow)
 
 2. Database Structure (MongoDB)
 
@@ -127,7 +127,7 @@ GOAT
 
 #### 2.2.3 Frontend
 
-![Figure 2.3 Frontend Flow Chart](path_to_image)
+![Figure 2.3 Frontend Flow Chart](Doc_img/auth-code-flow)
 
 ## 3. Recommend System
 
