@@ -94,7 +94,7 @@ GOAT
 
 1. Spotify Session Flow Chart
 
-![Figure 2.2 Spotify Api Session Flow Chart](Doc_img/auauth-code-flow)
+![Figure 2.2 Spotify Api Session Flow Chart](Doc_img/auth-code-flow.png)
 
 2. Database Structure (MongoDB)
 
@@ -127,7 +127,7 @@ GOAT
 
 #### 2.2.3 Frontend
 
-![Figure 2.3 Frontend Flow Chart](Doc_img/auth-code-flow)
+![Figure 2.3 Frontend Flow Chart](Doc_img/Front Flow Chart.png)
 
 ## 3. Recommend System
 
@@ -266,7 +266,7 @@ Step 2 PorterStemmer 알고리즘을 이용하여 단어에서 핵심 의미를 
 
 Step 1 학습에 사용할 데이터 셋을 불러온다.
 
-![Figure 4.1 Train Dataset Structure Example, JSON File](path_to_image)
+![Figure 4.1 Train Dataset Structure Example, JSON File](Doc_img/intents_json.png)
 
  Step 2 학습 데이터를 1에 따라 가공한다.
  
@@ -274,7 +274,7 @@ Step 1 학습에 사용할 데이터 셋을 불러온다.
 
 3. 모델 형태 (실제 코드에서는 각 층마다 8개의 노드가 있다.)
 
-![Figure 4.2 Neural Network Structure Example](path to image)
+![Figure 4.2 Neural Network Structure Example](Doc_img/INPUT.png)
 
 총 3개의 은닉층(hidden layer)으로 이루어져 있으며, 각 은닉층은 활성화 함수(activation function)로 Relu 함수를 사용하고 있다
 
