@@ -66,7 +66,7 @@ GOAT
 ## 2. Architectural Design
 
 ### 2.1 Data Flow Diagram
-![Figure 2.1 Data flow](path_to_image)
+![Figure 2.1 Data flow](Doc_img/DataFlow.png)
 
 ### 2.2 Tech
 
