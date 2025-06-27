@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: sots_mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=spotify_db
+
+  web:
+    build: .
+    container_name: sots_web
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      - client_id=338c28bf528f4f9299126643f64c0140
+      - client_secret=d4eaaabfd364496f8c104ec3aa9d4f20
+      - secret_key=mysecretkey123
+      - MONGO_HOST=mongodb
+    volumes:
+      - .:/app
+    depends_on:
+      - mongodb
+
+volumes:
+  mongodb_data: 
