@@ -8,7 +8,7 @@
 
 ## 📖 프로젝트 소개
 
-SOTP는 **Spotify API**와 **Google Gemma-3-4b-it** AI 모델을 활용한 지능형 음악 추천 웹 서비스입니다. 사용자의 음악 취향을 분석하고 개인화된 추천을 제공하며, 자연스러운 한국어 대화가 가능한 음악 전문 AI 챗봇을 포함하고 있습니다.
+SOTP는 **Spotify API**와 **Google Gemma-3-4b-it** AI 모델을 활용한 지능형 음악 추천 웹 서비스. 사용자의 음악 취향을 분석하고 개인화된 추천을 제공하며, 자연스러운 한국어 대화가 가능한 음악 전문 AI 챗봇을 포함
 
 ### ✨ 주요 기능
 
@@ -62,32 +62,6 @@ export secret_key="your_flask_secret_key"
 
 # Docker Compose로 실행
 docker-compose up --build
-```
-
-#### 방법 2: 로컬 설치
-
-```bash
-# 저장소 클론
-git clone <repository-url>
-cd WEB_PROJECT
-
-# 가상환경 생성 및 활성화
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-
-# 의존성 설치
-pip install -r requirement.txt
-
-# MongoDB 실행 (별도 터미널)
-mongod
-
-# 환경 변수 설정
-export client_id="your_spotify_client_id"
-export client_secret="your_spotify_client_secret"
-export secret_key="your_flask_secret_key"
-
-# 애플리케이션 실행
-python app.py
 ```
 
 ### 🌐 접속
@@ -152,7 +126,6 @@ curl https://127.0.0.1:5000/chat/status
 curl -X POST https://127.0.0.1:5000/chat/clear
 ```
 
----
 
 ## 📊 주요 기능 상세
 
@@ -298,18 +271,3 @@ curl https://127.0.0.1:5000/chat/status
 - [MongoDB Documentation](https://docs.mongodb.com/)
 
 ---
-
-## 🆕 최근 업데이트 (v2.0)
-
-### ✅ 새로운 기능
-- **Gemma-3-4b-it AI 모델** 통합으로 고급 대화형 챗봇 구현
-- **맥락 인식 대화** 및 음악 전문 지식 제공
-- **개선된 API 엔드포인트** (`/chat/status`, `/chat/clear`)
-- **향상된 오류 처리** 및 대체 응답 시스템
-
-### 🔄 변경사항
-- 기존 간단한 패턴 매칭 챗봇 → 고급 AI 모델로 교체
-- `transformers` 및 `accelerate` 라이브러리 추가
-- 더 자연스럽고 유용한 음악 관련 대화 지원
-
-**SOTP와 함께 새로운 음악 여행을 시작하세요! 🎵✨**
